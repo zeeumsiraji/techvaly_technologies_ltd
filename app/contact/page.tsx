@@ -1,10 +1,29 @@
 'use client'
-import { useState } from 'react'
+import { useState, FormEvent, ChangeEvent } from 'react'
 import { motion } from 'motion/react'
-import { MapPin, Phone, Mail, Clock, Send,  X } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
+
+// Define types for form data
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
+
+// Define type for contact info - FIXED: Changed JSX.Element to React.ReactNode
+interface ContactInfo {
+  icon: React.ReactNode;  // ← THIS IS THE FIX
+  title: string;
+  details: string[];
+}
+
+// Define type for submit status
+type SubmitStatus = 'success' | null;
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
@@ -12,17 +31,19 @@ export default function ContactPage() {
     message: ''
   })
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(null)
 
-  const handleChange = (e) => {
+  // Fixed: Added proper type for event parameter
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     })
   }
 
-  const handleSubmit = async (e) => {
+  // Fixed: Added proper type for event parameter
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
     
@@ -41,7 +62,7 @@ export default function ContactPage() {
     }, 1500)
   }
 
-  const contactInfo = [
+  const contactInfo: ContactInfo[] = [
     {
       icon: <MapPin className="w-6 h-6" />,
       title: 'Visit Us',
@@ -114,27 +135,6 @@ export default function ContactPage() {
                 </div>
               </motion.div>
             ))}
-
-            {/* Social Links */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              {/* <h3 className="text-white font-semibold text-lg mb-4">Follow Us</h3>
-              <div className="flex gap-4">
-                {[Instagram, Linkedin, X].map((Icon, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className="text-white/60 hover:text-tiger-orange transition-colors p-2 bg-white/5 rounded-lg hover:bg-tiger-orange/10"
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                ))}
-              </div> */}
-            </motion.div>
           </motion.div>
 
           {/* Contact Form */}
@@ -276,7 +276,7 @@ export default function ContactPage() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </div> 
     </div>
   )
 }
