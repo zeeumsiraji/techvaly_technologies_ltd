@@ -1,65 +1,152 @@
 'use client'
-import { useState, FormEvent, ChangeEvent } from 'react'
+
+import { useState, FormEvent, ChangeEvent, useRef } from 'react'
 import { motion } from 'motion/react'
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, Upload, X, FileText } from 'lucide-react'
 
-// Define types for form data
 interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
+  name: string
+  number: string
+  email: string
+  address: string
+  file: File | null
 }
 
-// Define type for contact info - FIXED: Changed JSX.Element to React.ReactNode
 interface ContactInfo {
-  icon: React.ReactNode;  // ← THIS IS THE FIX
-  title: string;
-  details: string[];
+  icon: React.ReactNode
+  title: string
+  details: string[]
 }
 
-// Define type for submit status
-type SubmitStatus = 'success' | null;
+type SubmitStatus = 'success' | 'error' | null
+
+// IMPORTANT: Replace this with your actual Google Apps Script URL
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4ZfiLt1h2MsEjVazm6pUNnOzeSqJ8cDB_Xk0RZRMwWN9wxO8jYJoPuWZyZIE8q90XuA/exec"
+
+// Maximum file size: 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024
+// Allowed file types
+const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
 
 export default function ContactPage() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
+    number: '',
     email: '',
-    phone: '',
-    subject: '',
-    message: ''
+    address: '',
+    file: null
   })
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(null)
+  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [fileError, setFileError] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Fixed: Added proper type for event parameter
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files, type } = e.target
+
+    if (type === 'file') {
+      const file = files?.[0] || null
+      
+      setFileError('')
+      
+      if (file) {
+        if (file.size > MAX_FILE_SIZE) {
+          setFileError(`File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`)
+          if (fileInputRef.current) fileInputRef.current.value = ''
+          return
+        }
+        
+        if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+          setFileError('Only PDF, DOC, or DOCX files are allowed')
+          if (fileInputRef.current) fileInputRef.current.value = ''
+          return
+        }
+      }
+      
+      setFormData((prev) => ({
+        ...prev,
+        file: file
+      }))
+      return
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
-  // Fixed: Added proper type for event parameter
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsSubmitting(true)
     
-    // Simulate form submission
-    setTimeout(() => {
+    if (formData.file && formData.file.size > MAX_FILE_SIZE) {
+      setFileError(`File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`)
+      return
+    }
+    
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+    setErrorMessage('')
+    setFileError('')
+
+    try {
+      // Prepare data to send
+      const postData = {
+        name: formData.name,
+        number: formData.number,
+        email: formData.email,
+        address: formData.address,
+        fileName: formData.file?.name || '',
+        fileSize: formData.file ? `${(formData.file.size / 1024).toFixed(2)} KB` : '',
+        fileType: formData.file?.type || '',
+        timestamp: new Date().toISOString()
+      }
+
+      // Submit form data to Google Sheets
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData)
+      })
+
       setSubmitStatus('success')
-      setIsSubmitting(false)
+      
+      // Reset form
       setFormData({
         name: '',
+        number: '',
         email: '',
-        phone: '',
-        subject: '',
-        message: ''
+        address: '',
+        file: null
       })
+      
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      
       setTimeout(() => setSubmitStatus(null), 5000)
-    }, 1500)
+      
+    } catch (error) {
+      console.error('Submission error:', error)
+      setSubmitStatus('error')
+      setErrorMessage('Something went wrong. Please try again.')
+      
+      setTimeout(() => {
+        setSubmitStatus(null)
+        setErrorMessage('')
+      }, 5000)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const removeFile = () => {
+    setFormData((prev) => ({ ...prev, file: null }))
+    if (fileInputRef.current) fileInputRef.current.value = ''
+    setFileError('')
   }
 
   const contactInfo: ContactInfo[] = [
@@ -87,11 +174,9 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-6">
-      {/* Background with water/mirror effect */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-400/10 via-cyan-400/10 to-teal-400/10" />
-      
+      <div className="fixed inset-0 -z-10 bg-linear-to-br from-blue-400/10 via-cyan-400/10 to-teal-400/10" />
+
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -102,12 +187,11 @@ export default function ContactPage() {
             Contact <span className="text-tiger-orange">Us</span>
           </h1>
           <p className="text-white/70 text-lg max-w-2xl mx-auto">
-            Have a project in mind? We'd love to hear from you. Get in touch with our team today.
+            Have a project in mind? We&apos;d love to hear from you. Submit your information and we&apos;ll get back to you within 24 hours.
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Contact Information Cards */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -120,16 +204,20 @@ export default function ContactPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-tiger-orange/50 transition-all duration-300"
+                className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-tiger-orange/50 transition-all duration-300 group"
               >
                 <div className="flex items-start gap-4">
-                  <div className="text-tiger-orange bg-tiger-orange/10 p-3 rounded-lg">
+                  <div className="text-tiger-orange bg-tiger-orange/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
                     {info.icon}
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-2">{info.title}</h3>
+                    <h3 className="text-white font-semibold text-lg mb-2">
+                      {info.title}
+                    </h3>
                     {info.details.map((detail, i) => (
-                      <p key={i} className="text-white/60 text-sm">{detail}</p>
+                      <p key={i} className="text-white/60 text-sm">
+                        {detail}
+                      </p>
                     ))}
                   </div>
                 </div>
@@ -137,7 +225,6 @@ export default function ContactPage() {
             ))}
           </motion.div>
 
-          {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -145,105 +232,160 @@ export default function ContactPage() {
             className="lg:col-span-2"
           >
             <div className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-              <h2 className="text-2xl font-bold text-white mb-6">Send us a Message</h2>
-              
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Submit Your Information
+              </h2>
+              <p className="text-white/60 mb-6">
+                Fill out the form below and we&apos;ll get back to you as soon as possible.
+              </p>
+
               {submitStatus === 'success' && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400"
                 >
-                  Thank you! Your message has been sent successfully.
+                  ✓ Thank you! Your form has been submitted successfully. We&apos;ll contact you soon.
+                </motion.div>
+              )}
+
+              {submitStatus === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400"
+                >
+                  ✗ {errorMessage || 'Something went wrong. Please try again.'}
                 </motion.div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Your Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange transition-colors"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange transition-colors"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange transition-colors"
-                      placeholder="+1 (555) 123-4567"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Subject *
-                    </label>
-                    <input
-                      type="text"
-                      name="subject"
-                      required
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange transition-colors"
-                      placeholder="How can we help?"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="John Doe"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-white/80 text-sm font-medium mb-2">
-                    Message *
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Phone Number *
                   </label>
-                  <textarea
-                    name="message"
+                  <input
+                    type="tel"
+                    name="number"
                     required
-                    rows={6}
-                    value={formData.message}
+                    value={formData.number}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange transition-colors resize-none"
-                    placeholder="Tell us about your project..."
+                    placeholder="+1 (555) 000-0000"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="john@example.com"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Address *
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    required
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="123 Main St, City, Country"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Upload Your CV
+                  </label>
+                  <p className="text-white/40 text-xs mb-3">
+                    Upload PDF, DOC, or DOCX. Max {MAX_FILE_SIZE / (1024 * 1024)} MB.
+                  </p>
+                  
+                  {!formData.file ? (
+                    <div className="relative">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        name="file"
+                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={handleChange}
+                        className="hidden"
+                        id="file-upload"
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white/5 border-2 border-dashed border-white/20 rounded-lg text-white/60 hover:border-tiger-orange/50 hover:bg-white/10 cursor-pointer transition-all duration-300"
+                      >
+                        <Upload className="w-5 h-5" />
+                        <span>Click to upload or drag and drop</span>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-tiger-orange/10 border border-tiger-orange/30 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-tiger-orange" />
+                        <div>
+                          <p className="text-white text-sm font-medium">{formData.file.name}</p>
+                          <p className="text-white/40 text-xs">
+                            {(formData.file.size / 1024).toFixed(2)} KB
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeFile}
+                        className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                      >
+                        <X className="w-5 h-5 text-white/60 hover:text-red-400" />
+                      </button>
+                    </div>
+                  )}
+                  
+                  {fileError && (
+                    <p className="text-red-400 text-xs mt-2">{fileError}</p>
+                  )}
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full md:w-auto px-8 py-3 bg-tiger-orange hover:bg-tiger-orange/80 text-white font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-8 py-3 bg-tiger-orange hover:bg-tiger-orange/80 text-white font-semibold rounded-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02]"
                 >
                   {isSubmitting ? (
-                    'Sending...'
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Submitting...
+                    </>
                   ) : (
                     <>
-                      Send Message
+                      Submit Application
                       <Send className="w-4 h-4" />
                     </>
                   )}
@@ -252,31 +394,7 @@ export default function ContactPage() {
             </div>
           </motion.div>
         </div>
-
-        {/* Map Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16"
-        >
-          <div className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-            <h3 className="text-white font-semibold text-xl mb-4">Find Us Here</h3>
-            <div className="rounded-xl overflow-hidden h-[400px]">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933059!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a316bb6b7cf%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1644262073847!5m2!1sen!2sus"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                className="grayscale hover:grayscale-0 transition-all duration-300"
-                title="Office Location"
-              ></iframe>
-            </div>
-          </div>
-        </motion.div>
-      </div> 
+      </div>
     </div>
   )
 }

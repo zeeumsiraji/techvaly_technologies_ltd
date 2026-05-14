@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'motion/react'
-
 import { Shield, UserCheck, Lock, ArrowRight } from 'lucide-react'
 
 export default function Hero() {
@@ -12,18 +11,16 @@ export default function Hero() {
   ]
 
   return (
-    <section className="relative h-[85vh] min-h-600px flex items-center overflow-hidden">
-      {/* Background Image with Overlay */}
+    <section className="relative h-[85vh] min-h-[600px] flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
           src="https://picsum.photos/seed/tech-security/1920/1080?blur=2"
           alt="Security Background"
           className="w-full h-full object-cover"
-          referrerPolicy="no-referrer"
         />
+
         <div className="absolute inset-0 bg-gradient-to-r from-tiger-dark/80 via-tiger-dark/40 to-transparent" />
 
-        {/* Abstract Tech Elements (Simulated) */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-1/4 right-1/4 w-64 h-64 border border-tiger-orange/30 rounded-full animate-pulse" />
           <div className="absolute bottom-1/4 right-1/3 w-96 h-96 border border-blue-400/20 rounded-full" />
@@ -41,6 +38,7 @@ export default function Hero() {
             <h2 className="text-4xl md:text-5xl font-bold text-tiger-orange tracking-tight">
               Services
             </h2>
+
             <div className="w-10 h-10 rounded-full bg-tiger-orange flex items-center justify-center text-white cursor-pointer hover:scale-110 transition-transform">
               <ArrowRight size={20} />
             </div>
@@ -55,9 +53,10 @@ export default function Hero() {
                 transition={{ delay: 0.2 + idx * 0.1 }}
                 className="flex items-center gap-4 group cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:bg-tiger-orange group-hover:text-white transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:bg-tiger-orange transition-all duration-300">
                   {service.icon}
                 </div>
+
                 <span className="text-white text-lg md:text-xl font-medium tracking-wide group-hover:text-tiger-orange transition-colors">
                   {service.text}
                 </span>
@@ -67,7 +66,6 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* Slider Indicators (Visual Only) */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
         {[1, 2, 3, 4].map((i) => (
           <div

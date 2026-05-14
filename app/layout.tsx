@@ -2,12 +2,10 @@ import type { Metadata } from 'next'
 import './globals.css'           // Your Tailwind CSS file
 import Navbar from './components/Navbar'
 import Footer from './components/footer/Footer'
-import Link from 'next/dist/client/link'
-import About from './components/About'
 
 export const metadata: Metadata = {
-  title: 'TigerIT - End-to-end Credential Management',
-  description: 'TigerIT provides end-to-end credential management solutions for government and state agencies.',
+  title: 'Softvaly®.com - End-to-end Credential Management',
+  description: 'Softvaly®.com provides end-to-end credential management solutions for government and state agencies.',
 }
 
 export default function RootLayout({
@@ -25,7 +23,7 @@ export default function RootLayout({
 
         
 
-          <main className="flex-grow">{children}</main>
+          <main className="grow">{children}</main>
           <Footer />
         </div>
       </body>
