@@ -20,7 +20,7 @@ export default function Navbar() {
     { name: 'ABOUT US', href: 'about' },
     { name: 'SOLUTIONS', href: '#', hasDropdown: true },
     { name: 'PROJECTS', href: 'projects' },
-    { name: 'SERVICES', href: 'services' },
+    { name: 'Client InFormation', href: 'client' },
     { name: 'CONTACT US', href: 'contact' },
   ]
 
@@ -38,8 +38,8 @@ export default function Navbar() {
           <div className="flex flex-col leading-none">
             <span className="text-2xl font-bold text-white tracking-tighter flex items-center">
               <Link href="/" className="text-tiger-orange italic">
-              <span className="text-tiger-orange italic">Softvaly</span>®
-              <span className="text-sm text-tiger-orange ml-0.5">.com</span>
+              <span className="text-tiger-orange italic">BdSoft</span>®
+              <span className="text-sm text-tiger-orange ml-0.5">.org</span>
               </Link>
             </span>
           </div>

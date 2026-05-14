@@ -19,7 +19,7 @@ export default function Hero() {
           className="w-full h-full object-cover"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-r from-tiger-dark/80 via-tiger-dark/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-tiger-dark/80 via-tiger-dark/40 to-transparent" />
 
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-1/4 right-1/4 w-64 h-64 border border-tiger-orange/30 rounded-full animate-pulse" />

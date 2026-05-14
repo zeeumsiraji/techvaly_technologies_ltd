@@ -174,7 +174,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-6">
-      <div className="fixed inset-0 -z-10 bg-linear-to-br from-blue-400/10 via-cyan-400/10 to-teal-400/10" />
+      <div className="fixed inset-0 -z-10 bg-linear-to-br from-blue-400/10 via-cyan-400/10 to-teal-400/10  bg-[#006A4E] "  />
 
       <div className="max-w-7xl mx-auto">
         <motion.div
