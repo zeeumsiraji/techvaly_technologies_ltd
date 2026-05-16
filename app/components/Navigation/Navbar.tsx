@@ -20,7 +20,7 @@ export default function Navbar() {
     { name: 'ABOUT US', href: 'about' },
     { name: 'SOLUTIONS', href: '#', hasDropdown: true },
     { name: 'PROJECTS', href: 'projects' },
-    { name: 'Client InFormation', href: 'client' },
+    { name: 'CAREERS', href: 'career' },
     { name: 'CONTACT US', href: 'contact' },
   ]
 

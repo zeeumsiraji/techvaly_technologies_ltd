@@ -212,7 +212,7 @@ const ProjectCard = ({ project, index, onHover }: ProjectCardProps) => {
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="relative h-[280px] rounded-2xl bg-gray-900/90 backdrop-blur-sm p-6 flex flex-col justify-between">
+        <div className="relative h-70 rounded-2xl bg-gray-900/90 backdrop-blur-sm p-6 flex flex-col justify-between">
           {/* Background Image with Overlay */}
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-20"
@@ -479,7 +479,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-linear-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
             Our Projects
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">

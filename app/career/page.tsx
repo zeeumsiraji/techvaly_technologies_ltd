@@ -184,10 +184,10 @@ export default function ContactPage() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Contact <span className="text-tiger-orange">Us</span>
+            Join <span className="text-tiger-orange">Us</span>
           </h1>
           <p className="text-white/70 text-lg max-w-2xl mx-auto">
-            Have a project in mind? We&apos;d love to hear from you. Submit your information and we&apos;ll get back to you within 24 hours.
+            Have you find job? We&apos;d love to hear from you. Submit your information and CV.
           </p>
         </motion.div>
 
@@ -320,7 +320,58 @@ export default function ContactPage() {
                   />
                 </div>
 
-               
+                <div>
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Upload Your CV
+                  </label>
+                  <p className="text-white/40 text-xs mb-3">
+                    Upload PDF, DOC, or DOCX. Max {MAX_FILE_SIZE / (1024 * 1024)} MB.
+                  </p>
+                  
+                  {!formData.file ? (
+                    <div className="relative">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        name="file"
+                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={handleChange}
+                        className="hidden"
+                        id="file-upload"
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white/5 border-2 border-dashed border-white/20 rounded-lg text-white/60 hover:border-tiger-orange/50 hover:bg-white/10 cursor-pointer transition-all duration-300"
+                      >
+                        <Upload className="w-5 h-5" />
+                        <span>Click to upload or drag and drop</span>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-tiger-orange/10 border border-tiger-orange/30 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-tiger-orange" />
+                        <div>
+                          <p className="text-white text-sm font-medium">{formData.file.name}</p>
+                          <p className="text-white/40 text-xs">
+                            {(formData.file.size / 1024).toFixed(2)} KB
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={removeFile}
+                        className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                      >
+                        <X className="w-5 h-5 text-white/60 hover:text-red-400" />
+                      </button>
+                    </div>
+                  )}
+                  
+                  {fileError && (
+                    <p className="text-red-400 text-xs mt-2">{fileError}</p>
+                  )}
+                </div>
 
                 <button
                   type="submit"
