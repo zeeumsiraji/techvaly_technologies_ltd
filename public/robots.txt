@@ -1,4 +1,9 @@
+# *
 User-agent: *
 Allow: /
 
+# Host
+Host: https://www.bdsoft.org
+
+# Sitemaps
 Sitemap: https://www.bdsoft.org/sitemap.xml

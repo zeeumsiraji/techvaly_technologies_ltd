@@ -2,12 +2,13 @@
   "name": "techvaly_technologies_ltd",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "build": "next build",
-    "start": "next start",
-    "dev": "next dev --webpack",
-    "lint": "eslint"
-  },
+ "scripts": {
+  "build": "next build",
+  "start": "next start",
+  "dev": "next dev --webpack",
+  "lint": "eslint",
+  "postbuild": "next-sitemap"
+},
   "dependencies": {
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
