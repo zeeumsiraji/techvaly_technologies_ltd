@@ -1,9 +1,34 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import {
+  ChevronDown,
+  Menu,
+  X,
+  Monitor,
+  Globe,
+  BriefcaseBusiness,
+  Bot,
+  Code2,
+  Cloud,
+  type LucideIcon,
+} from 'lucide-react'
+
+import {
+  SiAndroid,
+  SiApple,
+  SiLinux,
+} from 'react-icons/si'
+
+import type { IconType } from 'react-icons'
+
+type SolutionLink = {
+  name: string
+  href: string
+  icon: LucideIcon | IconType
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -27,17 +52,54 @@ export default function Navbar() {
     { name: 'CONTACT US', href: '/contact' },
   ]
 
-  const solutionLinks = [
-        
-
-    { name: 'Web Applications', href: '/solutions/web-applications' },
-    { name: 'Mobile Apps', href: '/solutions/mobile-apps' },
-    { name: 'SaaS Platforms', href: '/solutions/saas-platforms' },
-    { name: 'Business Software', href: '/solutions/business-software' },
-    { name: ' Automation', href: '/solutions/automation-systems' },
-    { name: 'Custom Software', href: '/solutions/custom-software' },
-    { name: ' API Development', href: '/solutions/api-development' },
-
+  const solutionLinks: SolutionLink[] = [
+   
+    {
+      name: 'Android Apps',
+      href: '/solutions/android-apps',
+      icon: SiAndroid,
+    },
+    {
+      name: 'Web Applications',
+      href: '/solutions/web-applications',
+      icon: Globe,
+    },
+   
+    {
+      name: 'iOS Apps',
+      href: '/solutions/ios-apps',
+      icon: SiApple,
+    },
+    {
+      name: 'Linux Apps',
+      href: '/solutions/linux-apps',
+      icon: SiLinux,
+    },
+    {
+      name: 'SaaS Platforms',
+      href: '/solutions/saas-platforms',
+      icon: Cloud,
+    },
+    {
+      name: 'Business Software',
+      href: '/solutions/business-software',
+      icon: BriefcaseBusiness,
+    },
+    {
+      name: 'Automation',
+      href: '/solutions/automation-systems',
+      icon: Bot,
+    },
+    {
+      name: 'Custom Software',
+      href: '/solutions/custom-software',
+      icon: Monitor,
+    },
+    {
+      name: 'API Development',
+      href: '/solutions/api-development',
+      icon: Code2,
+    },
   ]
 
   return (
@@ -48,16 +110,14 @@ export default function Navbar() {
           : 'bg-linear-to-r from-blue-400/20 via-cyan-400/20 to-teal-400/20 backdrop-blur-sm py-6'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        {/* Logo */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
         <Link href="/" className="text-2xl font-bold tracking-tighter">
-          <span className="text-tiger-orange italic">BdSoft</span>
+          <span className="text-orange-500 italic">BdSoft</span>
           <span className="text-white">®</span>
-          <span className="text-sm text-tiger-orange ml-0.5">.org</span>
+          <span className="ml-0.5 text-sm text-orange-500">.org</span>
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) =>
             link.hasDropdown ? (
               <div
@@ -68,7 +128,7 @@ export default function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className="text-white/90 hover:text-tiger-orange text-sm font-semibold tracking-wide transition-colors flex items-center gap-1"
+                  className="flex items-center gap-1 text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
                 >
                   {link.name}
                   <ChevronDown size={14} />
@@ -80,17 +140,22 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 mt-4 w-56 rounded-xl bg-white/95 backdrop-blur-md shadow-xl overflow-hidden"
+                      className="absolute left-0 top-full mt-4 w-64 overflow-hidden rounded-xl bg-white/95 shadow-xl backdrop-blur-md"
                     >
-                      {solutionLinks.map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className="block px-5 py-3 text-sm font-medium text-slate-700 hover:bg-tiger-orange hover:text-white transition-colors"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
+                      {solutionLinks.map((item) => {
+                        const Icon = item.icon
+
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-purple-50 hover:text-purple-600"
+                          >
+                            <Icon className="text-xl text-purple-500" />
+                            <span>{item.name}</span>
+                          </Link>
+                        )
+                      })}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -99,7 +164,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-white/90 hover:text-tiger-orange text-sm font-semibold tracking-wide transition-colors"
+                className="text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
               >
                 {link.name}
               </Link>
@@ -107,47 +172,51 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Toggle */}
         <button
-          className="md:hidden text-white"
+          type="button"
+          className="text-white md:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X /> : <Menu />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-linear-to-r from-blue-400/30 via-cyan-400/30 to-teal-400/30 backdrop-blur-md border-t border-white/10 overflow-hidden"
+            className="overflow-hidden border-t border-white/10 bg-linear-to-r from-blue-400/30 via-cyan-400/30 to-teal-400/30 backdrop-blur-md md:hidden"
           >
-            <div className="px-6 py-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-4 px-6 py-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-white text-lg font-medium"
+                  className="text-lg font-medium text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}
                 </Link>
               ))}
 
-              <div className="pl-4 flex flex-col gap-3 border-l border-white/20">
-                {solutionLinks.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-white/70 text-sm"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+              <div className="flex flex-col gap-2 border-l border-white/20 pl-4">
+                {solutionLinks.map((item) => {
+                  const Icon = item.icon
+
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="flex items-center gap-3 rounded-lg px-4 py-3 text-white transition hover:bg-white/10"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Icon className="text-xl text-purple-300" />
+                      <span>{item.name}</span>
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           </motion.div>

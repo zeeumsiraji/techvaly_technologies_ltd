@@ -1,11 +1,11 @@
-// app/solutions/mobile-apps/page.tsx
+// app/solutions/ios-apps/page.tsx
 
 export default function MobileAppsPage() {
   return (
     <main className="min-h-screen bg-black text-white pt-32 px-6">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-5xl font-bold mb-6 text-tiger-orange">
-          Mobile Apps
+          Ios Apps
         </h1>
 
         <p className="text-white/70 text-lg leading-8">
