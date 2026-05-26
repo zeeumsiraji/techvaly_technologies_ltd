@@ -28,7 +28,7 @@ export default function FloatingChat() {
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[calc(100vh-120px)] max-h-[720px] w-[370px] flex-col overflow-hidden rounded-[35px] border border-gray-700 bg-white shadow-2xl">
+        <div className="fixed bottom-24 right-6 z-50 flex h-[calc(100vh-120px)] max-h-180 w-[370px] flex-col overflow-hidden rounded-[35px] border border-gray-700 bg-white shadow-2xl">
           <div className="flex shrink-0 items-center justify-between border-b bg-white px-5 py-4">
             <div className="flex items-center gap-3">
               <Image

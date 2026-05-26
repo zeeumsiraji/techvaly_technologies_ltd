@@ -24,6 +24,12 @@ import {
 
 import type { IconType } from 'react-icons'
 
+import SolutionsDropdown from './SolutionsDropdown'
+import ProjectDropdown from './ProjectDropdown'
+
+
+
+
 type SolutionLink = {
   name: string
   href: string
@@ -33,7 +39,6 @@ type SolutionLink = {
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,13 +52,12 @@ export default function Navbar() {
   const navLinks = [
     { name: 'ABOUT US', href: '/about' },
     { name: 'SOLUTIONS', href: '/solutions', hasDropdown: true },
-    { name: 'PROJECTS', href: '/projects' },
-    { name: 'CLIENT INFORMATION', href: '/client' },
+    { name: 'PROJECTS', href: '/projects', hasDropdown: true },
+    { name: 'CAREER', href: '/career' },
     { name: 'CONTACT US', href: '/contact' },
   ]
 
   const solutionLinks: SolutionLink[] = [
-   
     {
       name: 'Android Apps',
       href: '/solutions/android-apps',
@@ -64,7 +68,6 @@ export default function Navbar() {
       href: '/solutions/web-applications',
       icon: Globe,
     },
-   
     {
       name: 'iOS Apps',
       href: '/solutions/ios-apps',
@@ -112,64 +115,34 @@ export default function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
         <Link href="/" className="text-2xl font-bold tracking-tighter">
-          <span className="text-orange-500 italic">BdSoft</span>
-          <span className="text-white">®</span>
-          <span className="ml-0.5 text-sm text-orange-500">.org</span>
+          <span className="text-green-500 italic">BdSoft</span>
+          <span className="text-red-500">®</span>
+          <span className="ml-0.5 text-sm text-green-500">.org</span>
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) =>
-            link.hasDropdown ? (
-              <div
-                key={link.name}
-                className="relative"
-                onMouseEnter={() => setIsSolutionsOpen(true)}
-                onMouseLeave={() => setIsSolutionsOpen(false)}
-              >
-                <Link
-                  href={link.href}
-                  className="flex items-center gap-1 text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
-                >
-                  {link.name}
-                  <ChevronDown size={14} />
-                </Link>
 
-                <AnimatePresence>
-                  {isSolutionsOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute left-0 top-full mt-4 w-64 overflow-hidden rounded-xl bg-white/95 shadow-xl backdrop-blur-md"
-                    >
-                      {solutionLinks.map((item) => {
-                        const Icon = item.icon
 
-                        return (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-purple-50 hover:text-purple-600"
-                          >
-                            <Icon className="text-xl text-purple-500" />
-                            <span>{item.name}</span>
-                          </Link>
-                        )
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
-              >
-                {link.name}
-              </Link>
-            )
-          )}
+        {navLinks.map((link) => {
+  if (link.name === 'SOLUTIONS') {
+    return <SolutionsDropdown key={link.name} link={link} solutions={solutionLinks} />
+  }
+  if (link.name === 'PROJECTS') {
+    return <ProjectDropdown key={link.name} />
+  }
+  return (
+    <Link
+      key={link.name}
+      href={link.href}
+      className="text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
+    >
+      {link.name}
+    </Link>
+  )
+})}
+
+
+        
         </div>
 
         <button

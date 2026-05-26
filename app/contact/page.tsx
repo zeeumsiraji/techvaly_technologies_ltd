@@ -148,29 +148,29 @@ export default function ContactPage() {
     if (fileInputRef.current) fileInputRef.current.value = ''
     setFileError('')
   }
-
-  const contactInfo: ContactInfo[] = [
+ const contactInfo: ContactInfo[] = [
     {
       icon: <MapPin className="w-6 h-6" />,
       title: 'Visit Us',
-      details: ['123 Tiger Street', 'Tech Valley, SV 90210', 'United States']
+      details: [' Word No-61, Adarsha Sarak, South Dania', 'Dhaka -1236', 'Bangladesh']
     },
     {
       icon: <Phone className="w-6 h-6" />,
       title: 'Call Us',
-      details: ['+1 (555) 123-4567', '+1 (555) 987-6543']
+      details: ['+8801977173707', '+8801410453566']
     },
     {
       icon: <Mail className="w-6 h-6" />,
       title: 'Email Us',
-      details: ['info@tigerit.com', 'support@tigerit.com']
+      details: ['info@bdsoft.org', 'support@bdsoft.org']
     },
     {
       icon: <Clock className="w-6 h-6" />,
       title: 'Working Hours',
-      details: ['Mon - Fri: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 4:00 PM', 'Sun: Closed']
+      details: ['Sun - thu: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 4:00 PM', 'Fri: Closed']
     }
   ]
+  
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-6">

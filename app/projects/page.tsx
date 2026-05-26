@@ -1,21 +1,25 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  ExternalLink, 
-  BookOpen,
-  Activity,
-  CreditCard,
-  Cpu,
-  Building,
-  CheckCircle,
+import { AnimatePresence, motion } from 'framer-motion';
+import {
   ArrowRight,
-  FileText,
+  Box,
+  CheckCircle,
+  Cloud,
+  Code,
+  Database,
   Download,
-  Eye
+  ExternalLink,
+  Eye,
+  FileText,
+  GitBranch,
+  Globe,
+  Layout,
+  Server,
+  Smartphone,
+  X
 } from 'lucide-react';
+import { useState } from 'react';
 
 // Types
 interface ProjectFile {
@@ -25,9 +29,16 @@ interface ProjectFile {
   size?: string;
 }
 
+interface DemoLink {
+  type: 'app' | 'web';
+  url: string;
+  label: string;
+}
+
 interface Project {
   id: number;
   title: string;
+  category: 'app' | 'web';
   shortDesc: string;
   fullDesc: string;
   techStack: string[];
@@ -35,7 +46,7 @@ interface Project {
   image: string;
   features: string[];
   color: string;
-  demoLink: string;
+  demoLinks: DemoLink[];
   projectFile?: ProjectFile;
 }
 
@@ -50,14 +61,16 @@ interface FullscreenModalProps {
   onClose: () => void;
 }
 
-// Project Data with Files
+// Project Data with Files and Dual Demos
 const projects: Project[] = [
+  // APP Projects
   {
     id: 1,
     title: "Student Support APP",
+    category: 'app',
     shortDesc: "Comprehensive school/college management system",
-    fullDesc: "A complete ecosystem for educational institutions that streamlines admissions, academics, finance, and communication. Features include exam management, attendance tracking, online classes, parental communication, and homework submission with live editing capabilities.",
-    techStack: ["React", "Node.js", "MongoDB", "Tailwind CSS", "Express.js"],
+    fullDesc: "A complete ecosystem for educational institutions that streamlines admissions, academics, finance, and communication. Features include exam management, attendance tracking, online classes, parental communication, and homework submission with live editing capabilities. Built with modern Kotlin and KMP for cross-platform compatibility.",
+    techStack: ["Kotlin", "Jetpack Compose", "KMP", "Android", "iOS", "MacOS", "Linux"],
     bgGradient: "from-blue-600 to-purple-600",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop",
     features: [
@@ -71,7 +84,10 @@ const projects: Project[] = [
       "Homework Submit & Live Edit"
     ],
     color: "blue",
-    demoLink: "#",
+    demoLinks: [
+      { type: 'app', url: '#', label: 'Android App Demo' },
+      { type: 'web', url: '#', label: 'Web Dashboard Demo' }
+    ],
     projectFile: {
       name: "Student_Support_APP_Overview.pdf",
       url: "/projects/student-support-app.pdf",
@@ -81,36 +97,11 @@ const projects: Project[] = [
   },
   {
     id: 2,
-    title: "Study Management System",
-    shortDesc: "Organize academic life, track progress, and manage resources",
-    fullDesc: "A powerful academic management platform that helps students organize their study materials, track assignments, monitor performance, and access learning resources efficiently. Features intelligent course planning and detailed analytics.",
-    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Tailwind CSS"],
-    bgGradient: "from-emerald-600 to-teal-600",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop",
-    features: [
-      "Course Planner with Syllabus Upload",
-      "Resource Library with Bookmarking",
-      "Assignment Tracker with Deadline Reminders",
-      "Performance Analytics & GPA Trends",
-      "Progress Report Generation",
-      "Study Goal Setting",
-      "Notes Download & Sharing"
-    ],
-    color: "emerald",
-    demoLink: "#",
-    projectFile: {
-      name: "Study_Management_System_Documentation.pdf",
-      url: "/projects/study-management-system.pdf",
-      type: "application/pdf",
-      size: "3.1 MB"
-    }
-  },
-  {
-    id: 3,
     title: "Mobile Banking System",
+    category: 'app',
     shortDesc: "High security, quick transactions, financial oversight",
-    fullDesc: "Enterprise-grade mobile banking solution with biometric authentication, real-time transactions, bill payments, and comprehensive account management. Features advanced security protocols and instant fund transfers.",
-    techStack: ["React Native", "Node.js", "Redis", "PostgreSQL", "AWS"],
+    fullDesc: "Enterprise-grade mobile banking solution with biometric authentication, real-time transactions, bill payments, and comprehensive account management. Features advanced security protocols and instant fund transfers. Built with Kotlin Multiplatform for seamless cross-platform experience.",
+    techStack: ["Kotlin", "Jetpack Compose", "KMP", "iOS", "MacOS", "Security"],
     bgGradient: "from-cyan-600 to-blue-600",
     image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop",
     features: [
@@ -120,10 +111,14 @@ const projects: Project[] = [
       "Scheduled Recurring Payments",
       "Card Freeze & PIN Change",
       "Fraud Detection & Reporting",
-      "Transaction History & Statements"
+      "Transaction History & Statements",
+      "Biometric Authentication"
     ],
     color: "cyan",
-    demoLink: "#",
+    demoLinks: [
+      { type: 'app', url: '#', label: 'Mobile Banking App' },
+      { type: 'web', url: '#', label: 'Admin Web Portal' }
+    ],
     projectFile: {
       name: "Mobile_Banking_System_Specs.pdf",
       url: "/projects/mobile-banking-system.pdf",
@@ -132,11 +127,12 @@ const projects: Project[] = [
     }
   },
   {
-    id: 4,
+    id: 3,
     title: "Hardware Helping Service",
+    category: 'app',
     shortDesc: "Book technicians, diagnose issues, order parts",
-    fullDesc: "On-demand hardware support platform connecting users with certified technicians for troubleshooting, repairs, and parts replacement. Features remote diagnostics, live chat support, and real-time technician tracking.",
-    techStack: ["Vue.js", "Django", "WebSocket", "PostgreSQL", "Docker"],
+    fullDesc: "On-demand hardware support platform connecting users with certified technicians for troubleshooting, repairs, and parts replacement. Features remote diagnostics, live chat support, and real-time technician tracking. Cross-platform app for all devices.",
+    techStack: ["Kotlin", "Jetpack Compose", "KMP", "WebSocket", "Android", "iOS"],
     bgGradient: "from-orange-600 to-red-600",
     image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=600&h=400&fit=crop",
     features: [
@@ -146,10 +142,14 @@ const projects: Project[] = [
       "Remote Support with Screen Sharing",
       "Technician Rating System",
       "Real-time Chat Support",
-      "Warranty Check & Claim"
+      "Warranty Check & Claim",
+      "Push Notifications"
     ],
     color: "orange",
-    demoLink: "#",
+    demoLinks: [
+      { type: 'app', url: '#', label: 'Customer App' },
+      { type: 'web', url: '#', label: 'Technician Portal' }
+    ],
     projectFile: {
       name: "Hardware_Helping_Service_Guide.pdf",
       url: "/projects/hardware-helping-service.pdf",
@@ -157,12 +157,46 @@ const projects: Project[] = [
       size: "2.3 MB"
     }
   },
+
+  // WEB Projects
+  {
+    id: 4,
+    title: "Study Management System",
+    category: 'web',
+    shortDesc: "Organize academic life, track progress, and manage resources",
+    fullDesc: "A powerful academic management platform that helps students organize their study materials, track assignments, monitor performance, and access learning resources efficiently. Features intelligent course planning and detailed analytics with real-time collaboration.",
+    techStack: ["React", "Next.js", "Node.js", "MongoDB", "Firebase", "Tailwind CSS"],
+    bgGradient: "from-emerald-600 to-teal-600",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop",
+    features: [
+      "Course Planner with Syllabus Upload",
+      "Resource Library with Bookmarking",
+      "Assignment Tracker with Deadline Reminders",
+      "Performance Analytics & GPA Trends",
+      "Progress Report Generation",
+      "Study Goal Setting",
+      "Notes Download & Sharing",
+      "Real-time Collaboration"
+    ],
+    color: "emerald",
+    demoLinks: [
+      { type: 'web', url: '#', label: 'Student Dashboard' },
+      { type: 'web', url: '#', label: 'Admin Panel' }
+    ],
+    projectFile: {
+      name: "Study_Management_System_Documentation.pdf",
+      url: "/projects/study-management-system.pdf",
+      type: "application/pdf",
+      size: "3.1 MB"
+    }
+  },
   {
     id: 5,
     title: "Construction Development Site",
+    category: 'web',
     shortDesc: "Track building progress for managers and clients",
-    fullDesc: "Comprehensive construction management platform enabling project managers, contractors, and clients to track progress, manage resources, and ensure safety compliance. Features real-time updates and detailed analytics.",
-    techStack: ["React", "Firebase", "Material-UI", "Chart.js", "Redux"],
+    fullDesc: "Comprehensive construction management platform enabling project managers, contractors, and clients to track progress, manage resources, and ensure safety compliance. Features real-time updates and detailed analytics with cloud integration.",
+    techStack: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "Prisma", "Tailwind CSS"],
     bgGradient: "from-amber-600 to-yellow-600",
     image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&h=400&fit=crop",
     features: [
@@ -172,15 +206,50 @@ const projects: Project[] = [
       "Site Safety Inspections & Compliance",
       "Milestone Tracking & Deadline Management",
       "Cost Estimation & Budget Tracking",
-      "Real-time Progress Reports"
+      "Real-time Progress Reports",
+      "Cloud Document Storage"
     ],
     color: "amber",
-    demoLink: "#",
+    demoLinks: [
+      { type: 'web', url: '#', label: 'Client Portal' },
+      { type: 'web', url: '#', label: 'Manager Dashboard' }
+    ],
     projectFile: {
       name: "Construction_Management_System_Overview.pdf",
       url: "/projects/construction-management.pdf",
       type: "application/pdf",
       size: "3.5 MB"
+    }
+  },
+  {
+    id: 6,
+    title: "E-Learning Platform",
+    category: 'web',
+    shortDesc: "Interactive online learning with live classes and assessments",
+    fullDesc: "Modern e-learning platform featuring live streaming classes, interactive quizzes, progress tracking, and certification management. Built with modern web technologies for optimal performance.",
+    techStack: ["React", "Node.js", "Express", "MongoDB", "Socket.io", "Redis"],
+    bgGradient: "from-rose-600 to-pink-600",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop",
+    features: [
+      "Live Streaming Classes",
+      "Interactive Quizzes & Assessments",
+      "Progress Tracking & Analytics",
+      "Certificate Generation",
+      "Discussion Forums",
+      "Video Library",
+      "Mobile Responsive Design",
+      "Payment Integration"
+    ],
+    color: "rose",
+    demoLinks: [
+      { type: 'web', url: '#', label: 'Student Portal' },
+      { type: 'web', url: '#', label: 'Instructor Dashboard' }
+    ],
+    projectFile: {
+      name: "E-Learning_Platform_Guide.pdf",
+      url: "/projects/elearning-platform.pdf",
+      type: "application/pdf",
+      size: "2.9 MB"
     }
   }
 ];
@@ -188,14 +257,16 @@ const projects: Project[] = [
 // Card Component
 const ProjectCard = ({ project, index, onHover }: ProjectCardProps) => {
   const getIcon = () => {
-    switch(project.id) {
-      case 1: return <BookOpen className="w-5 h-5 text-blue-400" />;
-      case 2: return <Activity className="w-5 h-5 text-emerald-400" />;
-      case 3: return <CreditCard className="w-5 h-5 text-cyan-400" />;
-      case 4: return <Cpu className="w-5 h-5 text-orange-400" />;
-      case 5: return <Building className="w-5 h-5 text-amber-400" />;
-      default: return <BookOpen className="w-5 h-5 text-blue-400" />;
+    if (project.category === 'app') {
+      return <Smartphone className="w-5 h-5 text-purple-400" />;
     }
+    return <Globe className="w-5 h-5 text-emerald-400" />;
+  };
+
+  const getCategoryColor = () => {
+    return project.category === 'app' 
+      ? 'bg-linear-to-r from-purple-500 to-pink-500'
+      : 'bg-linear-to-r from-emerald-500 to-teal-500';
   };
 
   return (
@@ -212,12 +283,20 @@ const ProjectCard = ({ project, index, onHover }: ProjectCardProps) => {
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="relative h-70 rounded-2xl bg-gray-900/90 backdrop-blur-sm p-6 flex flex-col justify-between">
+        <div className="relative h-80 rounded-2xl bg-gray-900/90 backdrop-blur-sm p-6 flex flex-col justify-between">
           {/* Background Image with Overlay */}
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-20"
             style={{ backgroundImage: `url(${project.image})` }}
           />
+          
+          {/* Category Badge */}
+          <div className="absolute top-4 right-4 z-10">
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white ${getCategoryColor()}`}>
+              {project.category === 'app' ? <Smartphone size={12} /> : <Globe size={12} />}
+              {project.category === 'app' ? 'APP' : 'WEB'}
+            </span>
+          </div>
           
           {/* Content */}
           <div className="relative z-10">
@@ -231,14 +310,14 @@ const ProjectCard = ({ project, index, onHover }: ProjectCardProps) => {
             
             {/* Tech Stack */}
             <div className="flex flex-wrap gap-2 mt-4">
-              {project.techStack.slice(0, 3).map((tech: string, idx: number) => (
+              {project.techStack.slice(0, 4).map((tech: string, idx: number) => (
                 <span key={idx} className="text-xs px-2 py-1 rounded-full bg-white/10 text-gray-300 backdrop-blur-sm">
                   {tech}
                 </span>
               ))}
-              {project.techStack.length > 3 && (
+              {project.techStack.length > 4 && (
                 <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-gray-300">
-                  +{project.techStack.length - 3}
+                  +{project.techStack.length - 4}
                 </span>
               )}
             </div>
@@ -292,9 +371,19 @@ const FullscreenModal = ({ project, onClose }: FullscreenModalProps) => {
               className="absolute inset-0 bg-cover bg-center opacity-30"
               style={{ backgroundImage: `url(${project.image})` }}
             />
-            <div className="absolute inset-0 bg-gradient-to- from-gray-900 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-gray-900 to-transparent" />
             <div className="relative z-10 h-full flex items-end p-8">
               <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white ${
+                    project.category === 'app' 
+                      ? 'bg-linear-to-r from-purple-500 to-pink-500'
+                      : '-r from-emerald-500 to-teal-500'
+                  }`}>
+                    {project.category === 'app' ? <Smartphone size={12} /> : <Globe size={12} />}
+                    {project.category === 'app' ? 'APP PROTOTYPE' : 'WEB PROTOTYPE'}
+                  </span>
+                </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">{project.title}</h2>
                 <p className="text-gray-300 text-lg">{project.shortDesc}</p>
               </div>
@@ -346,6 +435,34 @@ const FullscreenModal = ({ project, onClose }: FullscreenModalProps) => {
                   </div>
                 </div>
 
+                {/* Live Demos Section - Dual Prototypes */}
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-3">Live Prototypes</h3>
+                  <div className="space-y-3">
+                    {project.demoLinks.map((demo, idx) => (
+                      <motion.a
+                        key={idx}
+                        href={demo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`flex items-center justify-between gap-2 w-full px-4 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg ${
+                          demo.type === 'app'
+                            ? 'bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                            : 'bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {demo.type === 'app' ? <Smartphone size={18} /> : <Globe size={18} />}
+                          <span>{demo.label}</span>
+                        </div>
+                        <ExternalLink size={16} />
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">Project Files</h3>
                   {project.projectFile && (
@@ -382,21 +499,6 @@ const FullscreenModal = ({ project, onClose }: FullscreenModalProps) => {
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Live Demo</h3>
-                  <motion.a
-                    href={project.demoLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-linear-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold hover:shadow-lg transition-all"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    View Live Demo
-                  </motion.a>
                 </div>
 
                 {/* Quick Stats */}
@@ -456,12 +558,30 @@ const FullscreenModal = ({ project, onClose }: FullscreenModalProps) => {
 };
 
 // Main Page Component
-export default function Home() {
+export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [activeCategory, setActiveCategory] = useState<'all' | 'app' | 'web'>('all');
 
-  // Split projects into two rows
-  const firstRow = projects.slice(0, 3);
-  const secondRow = projects.slice(3, 5);
+  const filteredProjects = projects.filter(project => 
+    activeCategory === 'all' ? true : project.category === activeCategory
+  );
+
+  const appProjects = filteredProjects.filter(p => p.category === 'app');
+  const webProjects = filteredProjects.filter(p => p.category === 'web');
+
+  const techStackIcons = {
+    kotlin: <Code size={20} />,
+    compose: <Layout size={20} />,
+    kmp: <GitBranch size={20} />,
+    react: <Box size={20} />,
+    nextjs: <Server size={20} />,
+    nodejs: <Server size={20} />,
+    database: <Database size={20} />,
+    firebase: <Cloud size={20} />,
+    mongodb: <Database size={20} />,
+    supabase: <Cloud size={20} />,
+    postgres: <Database size={20} />
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
@@ -482,39 +602,101 @@ export default function Home() {
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-linear-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
             Our Projects
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Explore our innovative solutions across education, finance, hardware, and construction
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+            Explore our innovative solutions across mobile and web platforms
           </p>
+          
+          {/* Category Tabs */}
+          <div className="flex justify-center gap-4 mb-12">
+            <button
+              onClick={() => setActiveCategory('all')}
+              className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                activeCategory === 'all'
+                  ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
+            >
+              All Projects
+            </button>
+            <button
+              onClick={() => setActiveCategory('app')}
+              className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${
+                activeCategory === 'app'
+                  ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
+            >
+              <Smartphone size={18} />
+              App Prototypes
+            </button>
+            <button
+              onClick={() => setActiveCategory('web')}
+              className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${
+                activeCategory === 'web'
+                  ? 'bg-linear-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
+                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              }`}
+            >
+              <Globe size={18} />
+              Web Prototypes
+            </button>
+          </div>
         </motion.div>
       </div>
 
       {/* Projects Grid */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 pb-16">
-        {/* First Row - 3 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          {firstRow.map((project, index) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              index={index}
-              onHover={setSelectedProject}
-            />
-          ))}
-        </div>
-
-        {/* Second Row - 2 Cards Centered */}
-        <div className="flex justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full">
-            {secondRow.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={index + 3}
-                onHover={setSelectedProject}
-              />
-            ))}
+        {/* App Projects Section */}
+        {appProjects.length > 0 && (activeCategory === 'all' || activeCategory === 'app') && (
+          <div className="mb-12">
+            {(activeCategory === 'all') && (
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-8 w-1 bg-linear-to-b from-purple-500 to-pink-500 rounded-full" />
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Smartphone className="text-purple-400" />
+                  App Prototypes
+                </h2>
+                <p className="text-gray-400">Built with Kotlin, Jetpack Compose & KMP</p>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {appProjects.map((project, index) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  onHover={setSelectedProject}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Web Projects Section */}
+        {webProjects.length > 0 && (activeCategory === 'all' || activeCategory === 'web') && (
+          <div>
+            {(activeCategory === 'all') && (
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-8 w-1 bg-linear-to-b from-emerald-500 to-teal-500 rounded-full" />
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Globe className="text-emerald-400" />
+                  Web Prototypes
+                </h2>
+                <p className="text-gray-400">Built with React, Next.js, Node.js & Modern Stack</p>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {webProjects.map((project, index) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  onHover={setSelectedProject}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Fullscreen Modal */}
