@@ -1,43 +1,58 @@
-// app/solutions/page.tsx
-import Link from 'next/link';
+'use client'
+
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { Smartphone, Globe, Apple, Terminal, Cloud, Briefcase, Bot, Monitor, Code2 } from 'lucide-react'
 
 const solutions = [
-  { name: 'Android Apps', slug: 'android-apps', description: 'Build modern Android applications with excellent performance and intuitive interfaces.' },
-  { name: 'Web Applications', slug: 'web-applications', description: 'Scalable web apps with cutting-edge frameworks and responsive design.' },
-  { name: 'iOS Apps', slug: 'ios-apps', description: 'Native iOS applications that deliver seamless user experiences on Apple devices.' },
-  { name: 'Linux Apps', slug: 'linux-apps', description: 'Robust Linux applications optimized for performance and security.' },
-  { name: 'SaaS Platforms', slug: 'saas-platforms', description: 'End-to-end SaaS solutions with multi-tenancy and subscription management.' },
-  { name: 'Business Software', slug: 'business-software', description: 'Custom business software to streamline operations and boost productivity.' },
-  { name: 'Automation', slug: 'automation', description: 'Intelligent automation solutions to reduce manual work and eliminate errors.' },
-  { name: 'Custom Software', slug: 'custom-software', description: 'Tailored software solutions built to meet your unique business requirements.' },
-  { name: 'API Development', slug: 'api-development', description: 'Secure, scalable APIs that power your digital ecosystem.' }
-];
+  { name: 'Android Apps', icon: Smartphone, href: '/solutions/android-apps', gradient: 'from-green-600 to-emerald-600', color: 'green' },
+  { name: 'Web Apps', icon: Globe, href: '/solutions/web-applications', gradient: 'from-sky-600 to-cyan-600', color: 'sky' },
+  { name: 'iOS Apps', icon: Apple, href: '/solutions/ios-apps', gradient: 'from-slate-700 to-gray-700', color: 'slate' },
+  { name: 'Linux Apps', icon: Terminal, href: '/solutions/linux-apps', gradient: 'from-orange-600 to-amber-600', color: 'orange' },
+  { name: 'SaaS Platforms', icon: Cloud, href: '/solutions/saas-platforms', gradient: 'from-violet-600 to-purple-600', color: 'violet' },
+  { name: 'Business Software', icon: Briefcase, href: '/solutions/business-software', gradient: 'from-indigo-600 to-blue-600', color: 'indigo' },
+  { name: 'Automation', icon: Bot, href: '/solutions/automation-systems', gradient: 'from-cyan-600 to-teal-600', color: 'cyan' },
+  { name: 'Custom Software', icon: Monitor, href: '/solutions/custom-software', gradient: 'from-pink-600 to-rose-600', color: 'pink' },
+  { name: 'API Development', icon: Code2, href: '/solutions/api-development', gradient: 'from-slate-800 to-zinc-800', color: 'slate' },
+]
 
-export default function SolutionsPage() {
+export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white pt-32 px-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl font-bold mb-6 text-tiger-orange">Solutions</h1>
-        <p className="text-white/70 text-lg leading-8 max-w-3xl mb-12">
-          We deliver enterprise-grade software solutions across platforms and technologies.
-          Choose your area of interest below.
-        </p>
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-6">
+            Software Solutions
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Expert development services for every platform and business need
+          </p>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {solutions.map((solution) => (
-            <Link
-              key={solution.slug}
-              href={`/solutions/${solution.slug}`}
-              className="group block p-6 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all hover:border-tiger-orange/50"
+          {solutions.map((solution, index) => (
+            <motion.div
+              key={solution.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
             >
-              <h2 className="text-2xl font-semibold mb-2 group-hover:text-tiger-orange transition">
-                {solution.name}
-              </h2>
-              <p className="text-white/60 text-sm">{solution.description}</p>
-            </Link>
+              <Link href={solution.href}>
+                <div className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${solution.gradient} p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer`}>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all" />
+                  <solution.icon className="w-12 h-12 text-white mb-4" />
+                  <h3 className="text-2xl font-bold text-white mb-2">{solution.name}</h3>
+                  <p className="text-white/80">Professional development solutions</p>
+                </div>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
     </main>
-  );
+  )
 }

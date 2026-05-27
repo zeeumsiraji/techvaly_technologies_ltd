@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
-  ChevronDown,
   Menu,
   X,
   Monitor,
@@ -13,22 +12,20 @@ import {
   Bot,
   Code2,
   Cloud,
+  ChevronDown,
   type LucideIcon,
 } from 'lucide-react'
-
-import {
-  SiAndroid,
-  SiApple,
-  SiLinux,
-} from 'react-icons/si'
-
+import { SiAndroid, SiApple, SiLinux } from 'react-icons/si'
 import type { IconType } from 'react-icons'
 
 import SolutionsDropdown from './SolutionsDropdown'
 import ProjectDropdown from './ProjectDropdown'
 
-
-
+type NavLink = {
+  name: string
+  href: string
+  hasDropdown?: boolean
+}
 
 type SolutionLink = {
   name: string
@@ -36,161 +33,237 @@ type SolutionLink = {
   icon: LucideIcon | IconType
 }
 
+const navLinks: NavLink[] = [
+  { name: 'ABOUT US', href: '/about' },
+  { name: 'SOLUTIONS', href: '/solutions', hasDropdown: true },
+  { name: 'PROJECTS', href: '/projects', hasDropdown: true },
+  { name: 'CAREER', href: '/career' },
+  { name: 'CONTACT US', href: '/contact' },
+]
+
+const solutionLinks: SolutionLink[] = [
+  { name: 'Android Apps', href: '/solutions/android-apps', icon: SiAndroid },
+  { name: 'Web Applications', href: '/solutions/web-applications', icon: Globe },
+  { name: 'iOS Apps', href: '/solutions/ios-apps', icon: SiApple },
+  { name: 'Linux Apps', href: '/solutions/linux-apps', icon: SiLinux },
+  { name: 'SaaS Platforms', href: '/solutions/saas-platforms', icon: Cloud },
+  { name: 'Business Software', href: '/solutions/business-software', icon: BriefcaseBusiness },
+  { name: 'Automation', href: '/solutions/automation-systems', icon: Bot },
+  { name: 'Custom Software', href: '/solutions/custom-software', icon: Monitor },
+  { name: 'API Development', href: '/solutions/api-development', icon: Code2 },
+]
+
+const projectLinks = [
+  { name: 'App Development', href: '/projects/app' },
+  { name: 'Web Development', href: '/projects/web' },
+  { name: 'All Projects', href: '/projects/all' },
+  { name: 'Featured Project', href: '/projects/featured' },
+]
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
 
+    handleScroll()
     window.addEventListener('scroll', handleScroll)
+
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = [
-    { name: 'ABOUT US', href: '/about' },
-    { name: 'SOLUTIONS', href: '/solutions', hasDropdown: true },
-    { name: 'PROJECTS', href: '/projects', hasDropdown: true },
-    { name: 'CAREER', href: '/career' },
-    { name: 'CONTACT US', href: '/contact' },
-  ]
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : ''
 
-  const solutionLinks: SolutionLink[] = [
-    {
-      name: 'Android Apps',
-      href: '/solutions/android-apps',
-      icon: SiAndroid,
-    },
-    {
-      name: 'Web Applications',
-      href: '/solutions/web-applications',
-      icon: Globe,
-    },
-    {
-      name: 'iOS Apps',
-      href: '/solutions/ios-apps',
-      icon: SiApple,
-    },
-    {
-      name: 'Linux Apps',
-      href: '/solutions/linux-apps',
-      icon: SiLinux,
-    },
-    {
-      name: 'SaaS Platforms',
-      href: '/solutions/saas-platforms',
-      icon: Cloud,
-    },
-    {
-      name: 'Business Software',
-      href: '/solutions/business-software',
-      icon: BriefcaseBusiness,
-    },
-    {
-      name: 'Automation',
-      href: '/solutions/automation-systems',
-      icon: Bot,
-    },
-    {
-      name: 'Custom Software',
-      href: '/solutions/custom-software',
-      icon: Monitor,
-    },
-    {
-      name: 'API Development',
-      href: '/solutions/api-development',
-      icon: Code2,
-    },
-  ]
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMobileMenuOpen])
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false)
+    setOpenMobileDropdown(null)
+  }
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-linear-to-r from-blue-400/30 via-cyan-400/30 to-teal-400/30 backdrop-blur-md py-3 shadow-lg'
-          : 'bg-linear-to-r from-blue-400/20 via-cyan-400/20 to-teal-400/20 backdrop-blur-sm py-6'
+          ? 'bg-linear-to-r from-blue-400/30 via-cyan-400/30 to-teal-400/30 py-3 shadow-lg backdrop-blur-md'
+          : 'bg-linear-to-r from-blue-400/20 via-cyan-400/20 to-teal-400/20 py-4 backdrop-blur-sm sm:py-6'
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="text-2xl font-bold tracking-tighter">
-          <span className="text-green-500 italic">BdSoft</span>
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="shrink-0 text-xl font-bold tracking-tighter sm:text-2xl">
+          <span className="italic text-green-500">BdSoft</span>
           <span className="text-red-500">®</span>
-          <span className="ml-0.5 text-sm text-green-500">.org</span>
+          <span className="ml-0.5 text-xs text-green-500 sm:text-sm">.org</span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-5 md:flex lg:gap-8">
+          {navLinks.map((link) => {
+            if (link.name === 'SOLUTIONS') {
+              return (
+                <SolutionsDropdown
+                  key={link.name}
+                  link={link}
+                  solutions={solutionLinks}
+                />
+              )
+            }
 
+            if (link.name === 'PROJECTS') {
+              return <ProjectDropdown key={link.name} />
+            }
 
-        {navLinks.map((link) => {
-  if (link.name === 'SOLUTIONS') {
-    return <SolutionsDropdown key={link.name} link={link} solutions={solutionLinks} />
-  }
-  if (link.name === 'PROJECTS') {
-    return <ProjectDropdown key={link.name} />
-  }
-  return (
-    <Link
-      key={link.name}
-      href={link.href}
-      className="text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
-    >
-      {link.name}
-    </Link>
-  )
-})}
-
-
-        
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
+              >
+                {link.name}
+              </Link>
+            )
+          })}
         </div>
 
         <button
           type="button"
-          className="text-white md:hidden"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMobileMenuOpen}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-white transition hover:bg-white/10 md:hidden"
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >
-          {isMobileMenuOpen ? <X /> : <Menu />}
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-white/10 bg-linear-to-r from-blue-400/30 via-cyan-400/30 to-teal-400/30 backdrop-blur-md md:hidden"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25 }}
+            className="absolute left-0 right-0 top-full max-h-[calc(100vh-72px)] overflow-y-auto border-t border-white/10 bg-slate-950/95 shadow-xl backdrop-blur-md md:hidden"
           >
-            <div className="flex flex-col gap-4 px-6 py-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-lg font-medium text-white"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-
-              <div className="flex flex-col gap-2 border-l border-white/20 pl-4">
-                {solutionLinks.map((item) => {
-                  const Icon = item.icon
+            <div className="flex flex-col gap-2 px-4 py-5 sm:px-6">
+              {navLinks.map((link) => {
+                if (link.name === 'SOLUTIONS') {
+                  const isOpen = openMobileDropdown === 'SOLUTIONS'
 
                   return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center gap-3 rounded-lg px-4 py-3 text-white transition hover:bg-white/10"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <Icon className="text-xl text-purple-300" />
-                      <span>{item.name}</span>
-                    </Link>
+                    <div key={link.name} className="rounded-xl bg-white/5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenMobileDropdown(isOpen ? null : 'SOLUTIONS')
+                        }
+                        className="flex w-full items-center justify-between px-3 py-3 text-base font-semibold text-white"
+                      >
+                        <span>{link.name}</span>
+                        <ChevronDown
+                          size={18}
+                          className={`transition-transform ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="grid gap-2 px-3 pb-3 sm:grid-cols-2">
+                              {solutionLinks.map((item) => {
+                                const Icon = item.icon
+
+                                return (
+                                  <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/90 transition hover:bg-white/10 hover:text-orange-400"
+                                    onClick={closeMobileMenu}
+                                  >
+                                    <Icon className="text-lg text-purple-300" />
+                                    <span>{item.name}</span>
+                                  </Link>
+                                )
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   )
-                })}
-              </div>
+                }
+
+                if (link.name === 'PROJECTS') {
+                  const isOpen = openMobileDropdown === 'PROJECTS'
+
+                  return (
+                    <div key={link.name} className="rounded-xl bg-white/5">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenMobileDropdown(isOpen ? null : 'PROJECTS')
+                        }
+                        className="flex w-full items-center justify-between px-3 py-3 text-base font-semibold text-white"
+                      >
+                        <span>{link.name}</span>
+                        <ChevronDown
+                          size={18}
+                          className={`transition-transform ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="grid gap-2 px-3 pb-3">
+                              {projectLinks.map((item) => (
+                                <Link
+                                  key={item.name}
+                                  href={item.href}
+                                  className="rounded-lg px-3 py-2 text-sm text-white/90 transition hover:bg-white/10 hover:text-orange-400"
+                                  onClick={closeMobileMenu}
+                                >
+                                  {item.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
+
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="rounded-lg px-3 py-3 text-base font-semibold text-white transition hover:bg-white/10 hover:text-orange-400"
+                    onClick={closeMobileMenu}
+                  >
+                    {link.name}
+                  </Link>
+                )
+              })}
             </div>
           </motion.div>
         )}

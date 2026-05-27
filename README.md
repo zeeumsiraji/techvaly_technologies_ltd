@@ -39,6 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 git
 
-d> git add .                      
->> git commit -m "fix sitemap config"        
->> git push
+d> 
+git add .                      
+ git commit -m "Update solutions page design , Favicon,responsive design"        
+git push

@@ -1,10 +1,21 @@
 'use client'
 
-
 import Link from 'next/link'
-import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Smartphone, Globe, FolderGit2, Users, Sparkles, Filter, SortAsc, Mail, User, ArrowRight } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  ArrowRight,
+  ChevronDown,
+  Filter,
+  FolderGit2,
+  Globe,
+  Mail,
+  Smartphone,
+  SortAsc,
+  Sparkles,
+  User,
+  Users,
+} from 'lucide-react'
 
 type ProjectCategory = {
   title: string
@@ -32,7 +43,7 @@ export default function ProjectDropdown() {
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setIsOpen(false)
-    }, 100)
+    }, 120)
   }
 
   useEffect(() => {
@@ -47,14 +58,14 @@ export default function ProjectDropdown() {
       description: 'Design, build, and deploy mobile applications',
       icon: Smartphone,
       href: '/projects/app',
-      features: ['iOS & Android', 'Kotlin', 'KMP', 'Native Apps (MacOS & Linux)']
+      features: ['iOS & Android', 'Kotlin', 'KMP', 'MacOS & Linux'],
     },
     {
       title: 'Web Development',
-      description: 'Build modern, responsive websites and web apps',
+      description: 'Build modern responsive websites and web apps',
       icon: Globe,
       href: '/projects/web',
-      features: ['React & Next.js', 'Vue.js', 'Node.js', 'Cloud Integration']
+      features: ['React', 'Next.js', 'Node.js', 'Cloud'],
     },
   ]
 
@@ -78,72 +89,122 @@ export default function ProjectDropdown() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button 
+      <Link
+        href="/projects"
         className="flex items-center gap-1 text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
-        onClick={() => window.location.href = '/projects'}
+        aria-expanded={isOpen}
       >
         PROJECTS
-        <ChevronDown size={14} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-      </button>
+        <ChevronDown
+          size={14}
+          className={`transition-transform duration-300 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </Link>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 top-full mt-4 w-180 overflow-hidden rounded-xl bg-white/95 shadow-xl backdrop-blur-md"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            className="
+              absolute right-0 top-full z-50 mt-4
+              w-[80vw] max-w-4xl
+              overflow-hidden rounded-2xl
+              border border-white/20 bg-white/95
+              shadow-2xl backdrop-blur-md
+            "
           >
-            <div className="p-6">
-              {/* Two Cards Row */}
-              <div className="grid grid-cols-2 gap-4">
+            <div className="max-h-[68vh] overflow-y-auto p-4 sm:p-5">
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {mainCategories.map((category) => {
                   const Icon = category.icon
+
                   return (
                     <Link
                       key={category.title}
                       href={category.href}
-                      className="group relative overflow-hidden rounded-xl border border-slate-200 bg-linear-to-br from-white to-slate-50 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-purple-100 hover:border-purple-200"
                       onClick={() => setIsOpen(false)}
+                      className="
+                        group relative overflow-hidden rounded-2xl
+                        border border-slate-200
+                        bg-linear-to-br from-white to-slate-50
+                        p-4 transition-all duration-300
+                        hover:border-purple-200
+                        hover:shadow-xl hover:shadow-purple-100
+                      "
                     >
-                      {/* Decorative background */}
-                      <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-linear-to from-purple-100/50 to-blue-100/50 opacity-0 transition-all duration-300 group-hover:opacity-100" />
-                      
+                      <div
+                        className="
+                          absolute -right-6 -top-6 h-24 w-24
+                          rounded-full bg-linear-to-br
+                          from-purple-100/50 to-blue-100/50
+                          opacity-0 transition-all duration-300
+                          group-hover:opacity-100
+                        "
+                      />
+
                       <div className="relative z-10">
-                        {/* Icon */}
-                        <div className="mb-4 inline-block rounded-xl bg-linear-to-br from-purple-500 to-purple-600 p-2.5 text-white shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg">
-                          <Icon size={24} />
+                        <div
+                          className="
+                            mb-3 inline-flex rounded-xl
+                            bg-linear-to-br from-purple-500 to-purple-600
+                            p-2.5 text-white shadow-lg
+                            transition-transform duration-300
+                            group-hover:scale-110
+                          "
+                        >
+                          <Icon size={22} />
                         </div>
-                        
-                        {/* Title */}
-                        <h3 className="mb-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-purple-600">
+
+                        <h3
+                          className="
+                            mb-2 text-base font-bold text-slate-800
+                            transition-colors group-hover:text-purple-600
+                          "
+                        >
                           {category.title}
                         </h3>
-                        
-                        {/* Description */}
+
                         <p className="mb-3 text-sm text-slate-500">
                           {category.description}
                         </p>
-                        
-                        {/* Features */}
+
                         <div className="mb-4 flex flex-wrap gap-1.5">
                           {category.features?.map((feature) => (
                             <span
                               key={feature}
-                              className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600 transition-colors group-hover:bg-purple-100 group-hover:text-purple-700"
+                              className="
+                                rounded-full bg-slate-100
+                                px-2 py-0.5 text-xs text-slate-600
+                                transition-colors
+                                group-hover:bg-purple-100
+                                group-hover:text-purple-700
+                              "
                             >
                               {feature}
                             </span>
                           ))}
                         </div>
-                        
-                        {/* Learn more link */}
-                        <div className="flex items-center gap-1 text-sm font-medium text-purple-600 opacity-0 transition-all duration-300 group-hover:opacity-100">
+
+                        <div
+                          className="
+                            flex items-center gap-1
+                            text-sm font-medium text-purple-600
+                            opacity-0 transition-all duration-300
+                            group-hover:opacity-100
+                          "
+                        >
                           <span>Learn more</span>
-                          <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                          <ArrowRight
+                            size={14}
+                            className="transition-transform group-hover:translate-x-1"
+                          />
                         </div>
                       </div>
                     </Link>
@@ -151,27 +212,31 @@ export default function ProjectDropdown() {
                 })}
               </div>
 
-              {/* Divider */}
-              <div className="my-6 h-px bg-linear-to from-transparent via-slate-200 to-transparent" />
+              <div className="my-5 h-px bg-linear-to-r from-transparent via-slate-200 to-transparent" />
 
-              {/* Quick Links Section */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Quick Links */}
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>
-                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
                     Popular Projects
                   </h4>
+
                   <div className="space-y-1">
                     {leftQuickLinks.map((link) => {
                       const Icon = link.icon
+
                       return (
                         <Link
                           key={link.name}
                           href={link.href}
-                          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-600 transition-all hover:bg-purple-50 hover:text-purple-600 hover:pl-4"
                           onClick={() => setIsOpen(false)}
+                          className="
+                            flex items-center gap-3 rounded-lg
+                            px-3 py-2 text-sm text-slate-600
+                            transition-all duration-200
+                            hover:bg-purple-50 hover:pl-5 hover:text-purple-600
+                          "
                         >
-                          {Icon && <Icon size={14} className="text-slate-400" />}
+                          {Icon && <Icon size={15} className="text-slate-400" />}
                           <span>{link.name}</span>
                         </Link>
                       )
@@ -179,22 +244,28 @@ export default function ProjectDropdown() {
                   </div>
                 </div>
 
-                {/* Right Quick Links */}
                 <div>
-                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
                     Manage Projects
                   </h4>
+
                   <div className="space-y-1">
                     {rightQuickLinks.map((link) => {
                       const Icon = link.icon
+
                       return (
                         <Link
                           key={link.name}
                           href={link.href}
-                          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-600 transition-all hover:bg-purple-50 hover:text-purple-600 hover:pl-4"
                           onClick={() => setIsOpen(false)}
+                          className="
+                            flex items-center gap-3 rounded-lg
+                            px-3 py-2 text-sm text-slate-600
+                            transition-all duration-200
+                            hover:bg-purple-50 hover:pl-5 hover:text-purple-600
+                          "
                         >
-                          {Icon && <Icon size={14} className="text-slate-400" />}
+                          {Icon && <Icon size={15} className="text-slate-400" />}
                           <span>{link.name}</span>
                         </Link>
                       )
@@ -204,23 +275,44 @@ export default function ProjectDropdown() {
               </div>
             </div>
 
-            {/* Footer with featured project */}
-            <div className="border-t border-slate-100 bg-linear-to from-purple-50 to-blue-50 p-4">
+            <div className="border-t border-slate-100 bg-linear-to-r from-purple-50 to-blue-50 p-3">
               <Link
                 href="/projects/featured"
-                className="group flex items-center justify-between rounded-lg p-2 transition-all hover:bg-white/50"
                 onClick={() => setIsOpen(false)}
+                className="
+                  group flex flex-col gap-3 rounded-xl p-2
+                  transition-all hover:bg-white/60
+                  sm:flex-row sm:items-center sm:justify-between
+                "
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-linear-to from-purple-500 to-blue-500 p-1.5 text-white shadow-md">
+                  <div
+                    className="
+                      rounded-full bg-linear-to-r
+                      from-purple-500 to-blue-500
+                      p-2 text-white shadow-md
+                    "
+                  >
                     <Sparkles size={14} />
                   </div>
+
                   <div>
-                    <span className="font-medium text-slate-700">Featured Project</span>
-                    <span className="ml-2 text-sm text-slate-500">View our latest work</span>
+                    <p className="font-medium text-slate-700">
+                      Featured Project
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      View our latest work
+                    </p>
                   </div>
                 </div>
-                <ArrowRight size={16} className="text-purple-500 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-1" />
+
+                <ArrowRight
+                  size={18}
+                  className="
+                    text-purple-500 opacity-0 transition-all
+                    group-hover:translate-x-1 group-hover:opacity-100
+                  "
+                />
               </Link>
             </div>
           </motion.div>
