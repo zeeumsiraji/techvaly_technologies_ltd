@@ -1,4 +1,5 @@
-import Link from 'next/link'
+
+import { Link } from 'lucide-react'; // Or another UI/icon library
 
 export default function Footer() {
   const navLinks = [
@@ -48,7 +49,7 @@ export default function Footer() {
 
          
         
-      </div>
+      </div> 
     </footer>
   )
 }

@@ -1,3 +1,6 @@
+"use client";
+
+
 const sections = [
   {
     title: 'Our Mission',
@@ -24,7 +27,7 @@ const sections = [
 export default function About() {
   return (
     <>
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white-500">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-start">
             <div>
@@ -100,7 +103,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-24 bg-slate-50">
+      <section className="py-24 bg graw-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-5xl font-bold text-slate-800 tracking-tight">

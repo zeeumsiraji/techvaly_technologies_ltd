@@ -11,13 +11,9 @@ export default function Hero() {
   ]
 
   return (
-    <section className="relative h-[85vh] min-h-[600px] flex items-center overflow-hidden">
+    <section className="relative h-[85vh] min-h-150 flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
-        {/* <img
-          src="https://picsum.photos/seed/tech-security/1920/1080?blur=2"
-          alt="Security Background"
-          className="w-full h-full object-cover"
-        /> */}
+       
 
         <div className="absolute inset-0 bg-linear-to-r from-tiger-dark/80 via-tiger-dark/40 to-transparent" />
 

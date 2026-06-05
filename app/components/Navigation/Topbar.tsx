@@ -89,12 +89,12 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-linear-to-r from-blue-400/30 via-cyan-400/30 to-teal-400/30 py-3 shadow-lg backdrop-blur-md'
-          : 'bg-linear-to-r from-blue-400/20 via-cyan-400/20 to-teal-400/20 py-4 backdrop-blur-sm sm:py-6'
-      }`}
-    >
+  className={`fixed left-10 right-10 top-5 z-50 transition-all duration-300 rounded-[15px] ${
+    isScrolled
+      ? 'bg-slate-700/40 py-3 shadow-lg backdrop-blur-md border border-white/10'
+      : 'bg-slate-600/30 py-4 backdrop-blur-sm sm:py-6'
+  }`}
+>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0 text-xl font-bold tracking-tighter sm:text-2xl">
           <span className="italic text-green-500">BdSoft</span>
