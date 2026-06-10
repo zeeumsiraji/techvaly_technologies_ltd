@@ -1,5 +1,5 @@
 
-import { Link } from 'lucide-react'; // Or another UI/icon library
+import Link from 'next/link'; // নেভিগেশনের জন্য মেইন লিংক
 
 export default function Footer() {
   const navLinks = [

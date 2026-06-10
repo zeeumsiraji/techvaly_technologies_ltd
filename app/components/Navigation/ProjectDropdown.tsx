@@ -4,7 +4,6 @@
 
 
 import Link from 'next/link'; // নেভিগেশনের জন্য মেইন লিংক
-import { Link as LinkIcon } from 'lucide-react'; // আইকনের জন্য রিনেম করা হল
 
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'

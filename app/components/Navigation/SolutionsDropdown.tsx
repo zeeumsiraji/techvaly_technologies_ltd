@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'; // নেভিগেশনের জন্য মেইন লিংক
-import { Link as LinkIcon } from 'lucide-react'; // আইকনের জন্য রিনেম করা হলো
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'

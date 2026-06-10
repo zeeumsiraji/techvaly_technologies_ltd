@@ -1,6 +1,5 @@
 // app/layout.tsx
 import type { ReactNode } from 'react'
-import type { Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
@@ -119,7 +118,7 @@ export default function RootLayout({
          <div 
   className="fixed inset-0 -z-10 bg-cover bg-fixed bg-center bg-no-repeat"
   style={{ 
-    backgroundImage: "url('/backgroundImage/backgroundImage2.png')"
+    backgroundImage: "url('/backgroundImage/backgroundImage1.png')"
   }}
   aria-hidden="true"
 />
@@ -128,7 +127,7 @@ export default function RootLayout({
           <div 
   className="fixed inset-0 -z-10 bg-cover bg-fixed bg-center bg-no-repeat"
   style={{ 
-    backgroundImage: "url('/backgroundImage/backgroundImage2.png')",
+    backgroundImage: "url('/backgroundImage/backgroundImage1.png')",
     backgroundColor: '#0f172a',
     filter: 'brightness(1.2)'  // ১.২ = ২০% বেশি উজ্জ্বল, চাইলে ১.৩ বা ১.৫ দিন
   }}
