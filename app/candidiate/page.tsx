@@ -132,7 +132,10 @@ export default function ApplicationsPage() {
             <table className="w-full text-sm">
               <thead className="bg-white/10">
                 <tr>
+                  <th className="p-3 text-left">Typr</th>
+
                   <th className="p-3 text-left">Date</th>
+                  
                   <th className="p-3 text-left">Name</th>
                   <th className="p-3 text-left">Number</th>
                   <th className="p-3 text-left">Email</th>
