@@ -94,6 +94,7 @@ export default function ContactPage() {
     try {
       // Prepare data to send
       const postData = {
+        timestamp: new Date().toISOString(),
         name: formData.name,
         number: formData.number,
         email: formData.email,
@@ -101,7 +102,7 @@ export default function ContactPage() {
         fileName: formData.file?.name || '',
         fileSize: formData.file ? `${(formData.file.size / 1024).toFixed(2)} KB` : '',
         fileType: formData.file?.type || '',
-        timestamp: new Date().toISOString()
+        
       }
 
       // Submit form data to Google Sheets
@@ -118,6 +119,7 @@ export default function ContactPage() {
       
       // Reset form
       setFormData({
+        
         name: '',
         number: '',
         email: '',
@@ -393,6 +395,7 @@ export default function ContactPage() {
               </form>
             </div>
           </motion.div>
+
         </div>
       </div>
     </div>

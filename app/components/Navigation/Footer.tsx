@@ -5,7 +5,7 @@ export default function Footer() {
   const navLinks = [
     { name: 'ABOUT US', href: '/about' },
     { name: 'Terms of Service', href: '/terms' },
-    { name: 'Client Information', href: '/client' },
+    { name: 'Candidiate Information', href: '/candidiate' },
     { name: 'CONTACT US', href: '/contact' },
   ]
 

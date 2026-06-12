@@ -150,11 +150,13 @@ export default function RootLayout({
             {children}
           </main>
 
+          {/* Floating Chat Widget */}
+          <FloatingChat />
+
           {/* Footer */}
           <Footer />
 
-          {/* Floating Chat Widget */}
-          <FloatingChat />
+          
         </div>
       </body>
     </html>

@@ -124,7 +124,7 @@ export default function About() {
               >
                 <div className="mb-6">
                   <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-tiger-orange/10 text-tiger-orange text-2xl font-bold">
-                    0{index + 1}
+                  
                   </span>
                 </div>
 
