@@ -7,6 +7,7 @@ import Navbar from './components/Navigation/Topbar'
 import Footer from './components/Navigation/Footer'
 import FloatingChat from './components/Navigation/FloatingChat'
 
+
 import { metadata, viewport, siteConfig } from './metadata.config'
 
 // Initialize Inter font
@@ -93,14 +94,6 @@ export default function RootLayout({
         <meta name="geo.placename" content="Dhaka" />
         <meta name="geo.position" content="23.8103;90.4125" />
         <meta name="ICBM" content="23.8103, 90.4125" />
-        
-        {/* Preload Critical Assets */}
-        <link 
-          rel="preload" 
-          href="/backgroundImage/backgroundImage1.png" 
-          as="image"
-          type="image/png"
-        />
       </head>
 
       <body className={`${inter.className} antialiased`}>
@@ -112,32 +105,9 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        {/* Main Layout Container with Background Image */}
         <div className="relative flex min-h-screen flex-col">
-          {/* Background Image with Overlay for Better Text Contrast */}
-         <div 
-  className="fixed inset-0 -z-10 bg-cover bg-fixed bg-center bg-no-repeat"
-  style={{ 
-    backgroundImage: "url('/backgroundImage/backgroundImage1.png')"
-  }}
-  aria-hidden="true"
-/>
-          
-          {/* Optional Dark Overlay for Better Readability */}
-          <div 
-  className="fixed inset-0 -z-10 bg-cover bg-fixed bg-center bg-no-repeat"
-  style={{ 
-    backgroundImage: "url('/backgroundImage/backgroundImage1.png')",
-    backgroundColor: '#0f172a',
-    filter: 'brightness(1.2)'  // ১.২ = ২০% বেশি উজ্জ্বল, চাইলে ১.৩ বা ১.৫ দিন
-  }}
-  aria-hidden="true"
-/>
-
           {/* Navigation Bar - Fixed */}
-          <nav 
-            
-          >
+          <nav>
             <Navbar />
           </nav>
 
@@ -150,13 +120,12 @@ export default function RootLayout({
             {children}
           </main>
 
+
           {/* Floating Chat Widget */}
           <FloatingChat />
 
           {/* Footer */}
           <Footer />
-
-          
         </div>
       </body>
     </html>

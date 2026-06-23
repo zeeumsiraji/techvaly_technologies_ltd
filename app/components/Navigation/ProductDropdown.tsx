@@ -1,12 +1,8 @@
 'use client'
 
-
-
-
-import Link from 'next/link'; // নেভিগেশনের জন্য মেইন লিংক
-
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
   ChevronDown,
@@ -19,73 +15,73 @@ import {
   Sparkles,
   User,
   Users,
-} from 'lucide-react'
+} from 'lucide-react';
 
-type ProjectCategory = {
-  title: string
-  description: string
-  icon: React.ElementType
-  href: string
-  features?: string[]
-}
+type ProductCategory = {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  href: string;
+  features?: string[];
+};
 
 type QuickLink = {
-  name: string
-  href: string
-  icon?: React.ElementType
-}
+  name: string;
+  href: string;
+  icon?: React.ElementType;
+};
 
-export default function ProjectDropdown() {
-  const [isOpen, setIsOpen] = useState(false)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+export default function ProductDropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    setIsOpen(true)
-  }
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
 
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
-      setIsOpen(false)
-    }, 120)
-  }
+      setIsOpen(false);
+    }, 120);
+  };
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [])
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
-  const mainCategories: ProjectCategory[] = [
+  const mainCategories: ProductCategory[] = [
     {
       title: 'App Development',
       description: 'Design, build, and deploy mobile applications',
       icon: Smartphone,
-      href: '/projects/app',
+      href: '/products/app',
       features: ['iOS & Android', 'Kotlin', 'KMP', 'MacOS & Linux'],
     },
     {
       title: 'Web Development',
       description: 'Build modern responsive websites and web apps',
       icon: Globe,
-      href: '/projects/web',
+      href: '/products/web',
       features: ['React', 'Next.js', 'Node.js', 'Cloud'],
     },
-  ]
+  ];
 
   const leftQuickLinks: QuickLink[] = [
-    { name: 'Acme Corp', href: '/projects/acme', icon: FolderGit2 },
-    { name: 'Team', href: '/projects/team', icon: Users },
-    { name: 'All Projects', href: '/projects/all', icon: FolderGit2 },
-    { name: 'Resources', href: '/projects/resources', icon: FolderGit2 },
-  ]
+    { name: 'Featured Products', href: '/products/featured', icon: Sparkles },
+    { name: 'All Products', href: '/products/all', icon: FolderGit2 },
+    { name: 'Team', href: '/products/team', icon: Users },
+    { name: 'Resources', href: '/products/resources', icon: FolderGit2 },
+  ];
 
   const rightQuickLinks: QuickLink[] = [
-    { name: 'Sort by Date', href: '/projects/sort', icon: SortAsc },
-    { name: 'Filter by Tech', href: '/projects/filter', icon: Filter },
-    { name: 'Project Name', href: '/projects/name', icon: User },
-    { name: 'Contact Email', href: '/projects/email', icon: Mail },
-  ]
+    { name: 'Sort by Date', href: '/products/sort', icon: SortAsc },
+    { name: 'Filter by Tech', href: '/products/filter', icon: Filter },
+    { name: 'Product Name', href: '/products/name', icon: User },
+    { name: 'Contact Email', href: '/products/email', icon: Mail },
+  ];
 
   return (
     <div
@@ -94,11 +90,11 @@ export default function ProjectDropdown() {
       onMouseLeave={handleMouseLeave}
     >
       <Link
-        href="/projects"
+        href="/products"
         className="flex items-center gap-1 text-sm font-semibold tracking-wide text-white/90 transition-colors hover:text-orange-400"
         aria-expanded={isOpen}
       >
-        PROJECTS
+        PRODUCTS
         <ChevronDown
           size={14}
           className={`transition-transform duration-300 ${
@@ -127,7 +123,7 @@ export default function ProjectDropdown() {
             <div className="max-h-[68vh] overflow-y-auto p-4 sm:p-5">
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {mainCategories.map((category) => {
-                  const Icon = category.icon
+                  const Icon = category.icon;
 
                   return (
                     <Link
@@ -212,7 +208,7 @@ export default function ProjectDropdown() {
                         </div>
                       </div>
                     </Link>
-                  )
+                  );
                 })}
               </div>
 
@@ -221,12 +217,12 @@ export default function ProjectDropdown() {
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>
                   <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    Popular Projects
+                    Popular Products
                   </h4>
 
                   <div className="space-y-1">
                     {leftQuickLinks.map((link) => {
-                      const Icon = link.icon
+                      const Icon = link.icon;
 
                       return (
                         <Link
@@ -243,19 +239,19 @@ export default function ProjectDropdown() {
                           {Icon && <Icon size={15} className="text-slate-400" />}
                           <span>{link.name}</span>
                         </Link>
-                      )
+                      );
                     })}
                   </div>
                 </div>
 
                 <div>
                   <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                    Manage Projects
+                    Manage Products
                   </h4>
 
                   <div className="space-y-1">
                     {rightQuickLinks.map((link) => {
-                      const Icon = link.icon
+                      const Icon = link.icon;
 
                       return (
                         <Link
@@ -272,7 +268,7 @@ export default function ProjectDropdown() {
                           {Icon && <Icon size={15} className="text-slate-400" />}
                           <span>{link.name}</span>
                         </Link>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -281,7 +277,7 @@ export default function ProjectDropdown() {
 
             <div className="border-t border-slate-100 bg-linear-to-r from-purple-50 to-blue-50 p-3">
               <Link
-                href="/projects/featured"
+                href="/products/featured"
                 onClick={() => setIsOpen(false)}
                 className="
                   group flex flex-col gap-3 rounded-xl p-2
@@ -302,7 +298,7 @@ export default function ProjectDropdown() {
 
                   <div>
                     <p className="font-medium text-slate-700">
-                      Featured Project
+                      Featured Product
                     </p>
                     <p className="text-sm text-slate-500">
                       View our latest work
@@ -323,5 +319,5 @@ export default function ProjectDropdown() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

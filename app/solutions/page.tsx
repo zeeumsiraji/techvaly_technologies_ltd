@@ -16,16 +16,16 @@ const solutions = [
   { name: 'API Development', icon: Code2, href: '/solutions/api-development', gradient: 'from-slate-800 to-zinc-800', color: 'slate' },
 ]
 
-export default function Home() {
+export default function Solution() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <main className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-6">
+          <h1 className="text-5xl md:text-7xl font-black bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-6">
             Software Solutions
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -42,7 +42,7 @@ export default function Home() {
               transition={{ delay: index * 0.05 }}
             >
               <Link href={solution.href}>
-                <div className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${solution.gradient} p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer`}>
+                <div className={`group relative overflow-hidden rounded-2xl bg-linear-to-br ${solution.gradient} p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer`}>
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all" />
                   <solution.icon className="w-12 h-12 text-white mb-4" />
                   <h3 className="text-2xl font-bold text-white mb-2">{solution.name}</h3>
