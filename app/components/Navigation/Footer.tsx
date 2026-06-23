@@ -1,5 +1,4 @@
-
-import Link from 'next/link'; // নেভিগেশনের জন্য মেইন লিংক
+import Link from 'next/link';
 
 export default function Footer() {
   const navLinks = [
@@ -7,10 +6,10 @@ export default function Footer() {
     { name: 'Terms of Service', href: '/terms' },
     { name: 'Candidiate Information', href: '/candidiate' },
     { name: 'CONTACT US', href: '/contact' },
-  ]
+  ];
 
   return (
-    <footer className="bg-tiger-dark text-white py-12 border-t border-white/5">
+    <footer className="bg-blue-950 text-white py-12 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6 flex flex-col gap-8">
         
         {/* Top Section */}
@@ -22,7 +21,8 @@ export default function Footer() {
             <span className="text-sm text-tiger-orange ml-0.5">.org</span>
           </div>
 
-           <div className="border-t border-white/10 pt-6 flex flex-col text-sm text-white/40 text-center">
+          {/* Copyright - moved to the middle for better layout */}
+          <div className="border-t border-white/10 pt-6 flex flex-col text-sm text-white/40 text-center md:border-t-0 md:pt-0">
             © {new Date().getFullYear()} BdSoft.org — All rights reserved.
           </div>
 
@@ -38,18 +38,8 @@ export default function Footer() {
               </Link>
             ))}
           </div>
-
-          
         </div>
-
-        {/* Bottom Section */}
-      
-          
-          
-
-         
-        
-      </div> 
+      </div>
     </footer>
-  )
+  );
 }

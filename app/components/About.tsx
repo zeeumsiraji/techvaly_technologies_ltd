@@ -27,18 +27,17 @@ export default function Hero() {
 
   return (
     <>
-     
-
       {/* About Section with Solutions in the Middle */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-start">
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-start">
+            {/* Left Column - About */}
             <div>
-              <h2 className="text-5xl font-bold text-slate-800 mb-8 tracking-tight">
+              <h2 className="text-4xl sm:text-5xl font-bold text-slate-800 mb-6 sm:mb-8 tracking-tight">
                 About BdSoft.org
               </h2>
 
-              <p className="text-xl text-slate-600 leading-relaxed mb-6">
+              <p className="text-lg sm:text-xl text-slate-600 leading-relaxed mb-6">
                 <span className="font-semibold text-slate-900">BdSoft.org</span>{' '}
                 is a modern software company focused on building innovative
                 digital solutions while helping freshers become skilled and
@@ -49,7 +48,7 @@ export default function Hero() {
                 .
               </p>
 
-              <p className="text-lg text-slate-600 leading-relaxed mb-6">
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-6">
                 We believe real growth comes through practical experience,
                 teamwork, mentorship, and continuous learning. Our goal is not
                 only to create high-quality software products but also to build
@@ -57,7 +56,7 @@ export default function Hero() {
                 environments.
               </p>
 
-              <p className="text-lg text-slate-600 leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
                 BdSoft.org works on web applications, mobile apps, SaaS
                 platforms, business software, APIs, automation systems, and
                 custom software solutions. Alongside client projects, we also
@@ -66,36 +65,37 @@ export default function Hero() {
               </p>
             </div>
 
+            {/* Right Column - Highlights */}
             <div className="flex flex-col justify-center h-full">
               <div className="space-y-10">
                 <div>
-                  <h3 className="text-4xl md:text-5xl font-bold text-tiger-orange leading-tight">
+                  <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-tiger-orange leading-tight">
                     Fresher to Senior Developer
                   </h3>
 
-                  <p className="text-lg text-slate-500 mt-3 font-medium leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-500 mt-3 font-medium leading-relaxed">
                     Practical learning, mentorship, real projects, and
                     team-based development experience.
                   </p>
                 </div>
 
                 <div className="pt-2">
-                  <h3 className="text-5xl md:text-6xl font-bold text-tiger-orange tracking-tighter leading-none">
+                  <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold text-tiger-orange tracking-tighter leading-none">
                     Innovation <br /> Teamwork <br /> Growth
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 pt-4">
-                  <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                    <h4 className="text-3xl font-bold text-slate-800">Real</h4>
-                    <p className="text-slate-500 mt-2">
+                <div className="grid grid-cols-2 gap-4 sm:gap-6 pt-4">
+                  <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100">
+                    <h4 className="text-2xl sm:text-3xl font-bold text-slate-800">Real</h4>
+                    <p className="text-sm sm:text-base text-slate-500 mt-2">
                       Industry-level software development experience.
                     </p>
                   </div>
 
-                  <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                    <h4 className="text-3xl font-bold text-slate-800">Team</h4>
-                    <p className="text-slate-500 mt-2">
+                  <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100">
+                    <h4 className="text-2xl sm:text-3xl font-bold text-slate-800">Team</h4>
+                    <p className="text-sm sm:text-base text-slate-500 mt-2">
                       Collaborative workflow and agile development culture.
                     </p>
                   </div>
@@ -104,23 +104,23 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Solutions Section - Placed in the middle of About */}
-          <div className="mt-24">
+          {/* Solutions Section - with 2 columns on all screens and smaller cards on small screens */}
+          <div className="mt-16 md:mt-24">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-center mb-16"
+              className="text-center mb-12 md:mb-16"
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
                 Software Solutions
               </h2>
-              <p className="mt-4 text-xl text-slate-600 max-w-3xl mx-auto">
+              <p className="mt-3 md:mt-4 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
                 Expert development services for every platform and business need
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
               {solutions.map((solution, index) => (
                 <motion.div
                   key={solution.name}
@@ -129,11 +129,11 @@ export default function Hero() {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Link href={solution.href}>
-                    <div className={`group relative overflow-hidden rounded-2xl bg-linear-to-br ${solution.gradient} p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer`}>
+                    <div className={`group relative overflow-hidden rounded-2xl bg-linear-to-br ${solution.gradient} p-4 sm:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer`}>
                       <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all" />
-                      <solution.icon className="w-12 h-12 text-white mb-4" />
-                      <h3 className="text-2xl font-bold text-white mb-2">{solution.name}</h3>
-                      <p className="text-white/80">Professional development solutions</p>
+                      <solution.icon className="w-8 h-8 sm:w-12 sm:h-12 text-white mb-2 sm:mb-4" />
+                      <h3 className="text-base sm:text-2xl font-bold text-white mb-0.5 sm:mb-2">{solution.name}</h3>
+                      <p className="text-xs sm:text-base text-white/80">Professional development solutions</p>
                     </div>
                   </Link>
                 </motion.div>
@@ -141,36 +141,36 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Building Software & Future Developers Section - After Solutions */}
-          <div className="mt-24">
-            <div className="text-center mb-20">
-              <h2 className="text-5xl font-bold text-slate-800 tracking-tight">
+          {/* Building Software & Future Developers Section - with 2 columns on small screens */}
+          <div className="mt-16 md:mt-24">
+            <div className="text-center mb-12 md:mb-20">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
                 Building Software & Future Developers
               </h2>
 
-              <p className="mt-6 text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="mt-4 md:mt-6 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
                 BdSoft.org is focused on innovation, teamwork, practical learning,
                 and building scalable digital solutions for the modern world.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
               {sections.map((section, index) => (
                 <div
                   key={section.title}
-                  className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="mb-6">
-                    <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-tiger-orange/10 text-tiger-orange text-2xl font-bold">
-                     
+                  <div className="mb-4 sm:mb-6">
+                    <span className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-tiger-orange/10 text-tiger-orange text-xl sm:text-2xl font-bold">
+                      {/* optional icon */}
                     </span>
                   </div>
 
-                  <h3 className="text-3xl font-bold text-slate-800 mb-5 leading-tight">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3 sm:mb-5 leading-tight">
                     {section.title}
                   </h3>
 
-                  <p className="text-lg text-slate-600 leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
                     {section.description}
                   </p>
                 </div>
