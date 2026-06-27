@@ -2,9 +2,8 @@
 
 import Link from 'next/link'
 import { motion } from 'motion/react'
-import { Shield, UserCheck, Lock, ArrowRight } from 'lucide-react'
+import { Shield, UserCheck, Lock } from 'lucide-react'
 import { Smartphone, Globe, Apple, Terminal, Cloud, Briefcase, Bot, Monitor, Code2 } from 'lucide-react'
-import Image from 'next/image'
 
 const solutions = [
   { name: 'Android Apps', icon: Smartphone, href: '/solutions/android-apps', gradient: 'from-green-600 to-emerald-600' },
