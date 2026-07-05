@@ -92,7 +92,6 @@ export default function ContactPage() {
     setFileError('')
 
     try {
-      // Prepare data to send
       const postData = {
         name: formData.name,
         number: formData.number,
@@ -104,7 +103,6 @@ export default function ContactPage() {
         timestamp: new Date().toISOString()
       }
 
-      // Submit form data to Google Sheets
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -116,7 +114,6 @@ export default function ContactPage() {
 
       setSubmitStatus('success')
       
-      // Reset form
       setFormData({
         name: '',
         number: '',
@@ -148,33 +145,50 @@ export default function ContactPage() {
     if (fileInputRef.current) fileInputRef.current.value = ''
     setFileError('')
   }
- const contactInfo: ContactInfo[] = [
+
+  // ✅ Colorful icons – using solid colors (visible)
+  const colorfulIcons = [
+    <MapPin key="map" className="w-6 h-6 text-amber-400" />,
+    <Phone key="phone" className="w-6 h-6 text-emerald-400" />,
+    <Mail key="mail" className="w-6 h-6 text-violet-400" />,
+    <Clock key="clock" className="w-6 h-6 text-blue-400" />
+  ]
+
+  const contactInfo: ContactInfo[] = [
     {
-      icon: <MapPin className="w-6 h-6" />,
+      icon: colorfulIcons[0],
       title: 'Visit Us',
       details: [' Word No-61, Adarsha Sarak, South Dania', 'Dhaka -1236', 'Bangladesh']
     },
     {
-      icon: <Phone className="w-6 h-6" />,
+      icon: colorfulIcons[1],
       title: 'Call Us',
       details: ['+8801977173707', '+8801410453566']
     },
     {
-      icon: <Mail className="w-6 h-6" />,
+      icon: colorfulIcons[2],
       title: 'Email Us',
       details: ['info@bdsoft.org', 'support@bdsoft.org']
     },
     {
-      icon: <Clock className="w-6 h-6" />,
+      icon: colorfulIcons[3],
       title: 'Working Hours',
       details: ['Sun - thu: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 4:00 PM', 'Fri: Closed']
     }
   ]
-  
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6">
-      <div className="fixed inset-0 -z-10 bg-linear-to-br from-blue-400/10 via-cyan-400/10 to-teal-400/10" />
+    <div className="min-h-screen pt-32 pb-20 px-6 relative">
+      {/* Background image */}
+      <div 
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/contactbg.jpg')" }}
+      />
+      {/* Lighter overlay – reduced to 10% opacity */}
+      <div className="fixed inset-0 -z-10 bg-black/10" />
+      {/* Subtle gradients for depth */}
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-800/40 via-transparent to-transparent" />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent" />
 
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -186,7 +200,7 @@ export default function ContactPage() {
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
             Contact <span className="text-tiger-orange">Us</span>
           </h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
             Have a project in mind? We&apos;d love to hear from you. Submit your information and we&apos;ll get back to you within 24 hours.
           </p>
         </motion.div>
@@ -204,10 +218,10 @@ export default function ContactPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-tiger-orange/50 transition-all duration-300 group"
+                className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-tiger-orange/50 transition-all duration-300 group"
               >
                 <div className="flex items-start gap-4">
-                  <div className="text-tiger-orange bg-tiger-orange/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-white/5 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
                     {info.icon}
                   </div>
                   <div>
@@ -231,7 +245,7 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="lg:col-span-2"
           >
-            <div className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
               <h2 className="text-2xl font-bold text-white mb-2">
                 Submit Your Information
               </h2>
@@ -271,7 +285,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
@@ -286,7 +300,7 @@ export default function ContactPage() {
                     value={formData.number}
                     onChange={handleChange}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
@@ -301,7 +315,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="john@example.com"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
@@ -316,11 +330,49 @@ export default function ContactPage() {
                     value={formData.address}
                     onChange={handleChange}
                     placeholder="123 Main St, City, Country"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
-               
+                <div>
+                  <label className="block text-white/80 text-sm mb-2 font-medium">
+                    Attach File <span className="text-white/40 text-xs">(PDF, DOC, DOCX • max 5MB)</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      name="file"
+                      onChange={handleChange}
+                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/60 flex items-center justify-between transition-all duration-300 hover:bg-white/10 hover:border-tiger-orange/30">
+                      <span className="flex items-center gap-2">
+                        <Upload className="w-4 h-4" />
+                        {formData.file ? formData.file.name : 'Choose a file...'}
+                      </span>
+                      {formData.file && (
+                        <button
+                          type="button"
+                          onClick={removeFile}
+                          className="text-red-400 hover:text-red-300 transition-colors z-20 relative"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {fileError && (
+                    <p className="text-red-400 text-sm mt-1">{fileError}</p>
+                  )}
+                  {formData.file && !fileError && (
+                    <p className="text-emerald-400 text-sm mt-1 flex items-center gap-1">
+                      <FileText className="w-3 h-3" />
+                      {(formData.file.size / 1024).toFixed(2)} KB — ready to upload
+                    </p>
+                  )}
+                </div>
 
                 <button
                   type="submit"

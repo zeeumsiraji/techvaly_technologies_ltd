@@ -2,7 +2,7 @@
 
 import { useState, FormEvent, ChangeEvent, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Phone, Mail, Clock, Send, Upload, X, FileText } from 'lucide-react'
+import { MapPin, Phone, Mail, Clock, Send, Upload, X, FileText, Briefcase } from 'lucide-react'
 
 interface FormData {
   name: string
@@ -28,7 +28,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024
 // Allowed file types
 const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
 
-export default function ContactPage() {
+export default function CareerPage() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     number: '',
@@ -92,7 +92,6 @@ export default function ContactPage() {
     setFileError('')
 
     try {
-      // Prepare data to send
       const postData = {
         timestamp: new Date().toISOString(),
         name: formData.name,
@@ -102,10 +101,9 @@ export default function ContactPage() {
         fileName: formData.file?.name || '',
         fileSize: formData.file ? `${(formData.file.size / 1024).toFixed(2)} KB` : '',
         fileType: formData.file?.type || '',
-        
+        source: 'Career Page'
       }
 
-      // Submit form data to Google Sheets
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -117,9 +115,7 @@ export default function ContactPage() {
 
       setSubmitStatus('success')
       
-      // Reset form
       setFormData({
-        
         name: '',
         number: '',
         email: '',
@@ -151,34 +147,81 @@ export default function ContactPage() {
     setFileError('')
   }
 
+  // ✅ Solid colors – icons are now visible and colorful
+  const colorfulIcons = [
+    <MapPin key="map" className="w-6 h-6 text-amber-400" />,
+    <Phone key="phone" className="w-6 h-6 text-emerald-400" />,
+    <Mail key="mail" className="w-6 h-6 text-violet-400" />,
+    <Clock key="clock" className="w-6 h-6 text-blue-400" />
+  ]
+
   const contactInfo: ContactInfo[] = [
     {
-      icon: <MapPin className="w-6 h-6" />,
+      icon: colorfulIcons[0],
       title: 'Visit Us',
       details: [' Word No-61, Adarsha Sarak, South Dania', 'Dhaka -1236', 'Bangladesh']
     },
     {
-      icon: <Phone className="w-6 h-6" />,
+      icon: colorfulIcons[1],
       title: 'Call Us',
       details: ['+8801977173707', '+8801410453566']
     },
     {
-      icon: <Mail className="w-6 h-6" />,
+      icon: colorfulIcons[2],
       title: 'Email Us',
-      details: ['info@bdsoft.org', 'support@bdsoft.org']
+      details: ['careers@bdsoft.org', 'hr@bdsoft.org']
     },
     {
-      icon: <Clock className="w-6 h-6" />,
+      icon: colorfulIcons[3],
       title: 'Working Hours',
       details: ['Sun - thu: 9:00 AM - 6:00 PM', 'Sat: 10:00 AM - 4:00 PM', 'Fri: Closed']
     }
   ]
 
+  const jobOpenings = [
+    {
+      title: 'Senior Software Engineer',
+      department: 'Engineering',
+      type: 'Full-time',
+      location: 'Dhaka, Bangladesh',
+      description: 'Build scalable web applications with React, Node.js, and cloud technologies.'
+    },
+    {
+      title: 'UI/UX Designer',
+      department: 'Design',
+      type: 'Full-time',
+      location: 'Dhaka, Bangladesh',
+      description: 'Design beautiful, user‑centric interfaces for our products and clients.'
+    },
+    {
+      title: 'Digital Marketing Specialist',
+      department: 'Marketing',
+      type: 'Part-time',
+      location: 'Remote',
+      description: 'Drive growth through SEO, content marketing, and social media strategies.'
+    },
+    {
+      title: 'DevOps Engineer',
+      department: 'Engineering',
+      type: 'Full-time',
+      location: 'Dhaka, Bangladesh',
+      description: 'Automate and manage cloud infrastructure on AWS and Azure.'
+    }
+  ]
+
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6">
-      <div className="fixed inset-0 -z-10 bg-linear-to-br from-blue-400/10 via-cyan-400/10 to-teal-400/10" />
+    <div className="min-h-screen pt-32 pb-20 px-6 relative">
+      {/* Background image with 10% overlay */}
+      <div 
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/contactbg.jpg')" }}
+      />
+      <div className="fixed inset-0 -z-10 bg-black/10" />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-800/40 via-transparent to-transparent" />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent" />
 
       <div className="max-w-7xl mx-auto">
+        {/* Hero Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -186,30 +229,79 @@ export default function ContactPage() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Join <span className="text-tiger-orange">Us</span>
+            Join Our <span className="text-tiger-orange">Team</span>
           </h1>
-          <p className="text-white/70 text-lg max-w-2xl mx-auto">
-            Have you find job? We&apos;d love to hear from you. Submit your information and CV.
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
+            We&apos;re looking for passionate people to help us build amazing products. Explore our open positions and apply today.
           </p>
         </motion.div>
 
+        {/* Job Openings */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-16"
+        >
+          <h2 className="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+            <Briefcase className="w-8 h-8 text-tiger-orange" />
+            Open Positions
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {jobOpenings.map((job, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-tiger-orange/50 transition-all duration-300 group"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-xl font-semibold text-white group-hover:text-tiger-orange transition-colors">
+                      {job.title}
+                    </h3>
+                    <p className="text-white/60 text-sm mt-1">{job.department}</p>
+                  </div>
+                  <span className="px-3 py-1 bg-tiger-orange/20 text-tiger-orange text-xs font-medium rounded-full">
+                    {job.type}
+                  </span>
+                </div>
+                <p className="text-white/50 text-sm mt-3 flex items-center gap-1">
+                  <MapPin className="w-4 h-4" /> {job.location}
+                </p>
+                <p className="text-white/60 text-sm mt-2">{job.description}</p>
+                <button
+                  onClick={() => document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="mt-4 text-tiger-orange hover:text-tiger-orange/80 text-sm font-medium flex items-center gap-1 transition-colors"
+                >
+                  Apply Now <Send className="w-3 h-3" />
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Contact Info & Application Form */}
         <div className="grid lg:grid-cols-3 gap-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
             className="lg:col-span-1 space-y-6"
           >
             {contactInfo.map((info, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-tiger-orange/50 transition-all duration-300 group"
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
+                className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-tiger-orange/50 transition-all duration-300 group"
               >
                 <div className="flex items-start gap-4">
-                  <div className="text-tiger-orange bg-tiger-orange/10 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-white/5 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
                     {info.icon}
                   </div>
                   <div>
@@ -228,17 +320,19 @@ export default function ContactPage() {
           </motion.div>
 
           <motion.div
+            id="application-form"
             initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
             className="lg:col-span-2"
           >
-            <div className="bg-cyan-500/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
               <h2 className="text-2xl font-bold text-white mb-2">
-                Submit Your Information
+                Submit Your Application
               </h2>
               <p className="text-white/60 mb-6">
-                Fill out the form below and we&apos;ll get back to you as soon as possible.
+                Fill out the form below and upload your CV. We&apos;ll get back to you within 48 hours.
               </p>
 
               {submitStatus === 'success' && (
@@ -247,7 +341,7 @@ export default function ContactPage() {
                   animate={{ opacity: 1, y: 0 }}
                   className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400"
                 >
-                  ✓ Thank you! Your form has been submitted successfully. We&apos;ll contact you soon.
+                  ✓ Thank you! Your application has been submitted successfully. We&apos;ll contact you soon.
                 </motion.div>
               )}
 
@@ -273,7 +367,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
@@ -288,7 +382,7 @@ export default function ContactPage() {
                     value={formData.number}
                     onChange={handleChange}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
@@ -303,7 +397,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="john@example.com"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
@@ -318,13 +412,13 @@ export default function ContactPage() {
                     value={formData.address}
                     onChange={handleChange}
                     placeholder="123 Main St, City, Country"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-tiger-orange/50 focus:bg-white/10 transition-all duration-300"
                   />
                 </div>
 
                 <div>
                   <label className="block text-white/80 text-sm mb-2 font-medium">
-                    Upload Your CV
+                    Upload Your CV *
                   </label>
                   <p className="text-white/40 text-xs mb-3">
                     Upload PDF, DOC, or DOCX. Max {MAX_FILE_SIZE / (1024 * 1024)} MB.
@@ -395,7 +489,6 @@ export default function ContactPage() {
               </form>
             </div>
           </motion.div>
-
         </div>
       </div>
     </div>

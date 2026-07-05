@@ -112,7 +112,7 @@ export default function Navbar() {
       className={`fixed left-[5%] right-[5%] top-5 z-50 mx-auto max-w-[90%] rounded-[15px] transition-all duration-300 h-16 flex items-center ${
         isScrolled
           ? 'bg-sky-300/70 shadow-md backdrop-blur-md border border-sky-500/50'
-          : 'bg-sky-50/50 backdrop-blur-sm border border-sky-100/30'
+          : 'bg-sky-500/50 backdrop-blur-sm border border-sky-100/30'
       }`}
     >
       <div className="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -164,7 +164,7 @@ export default function Navbar() {
           {/* Contact Us Gradient Button */}
           <Link
             href="/contact"
-            className="rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-md hover:opacity-95 transition-opacity"
+            className="rounded-full text-white  from-sky-500 via-blue-500 to-indigo-600 px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-md hover:opacity-95 transition-opacity"
           >
             CONTACT US
           </Link>
@@ -230,7 +230,7 @@ export default function Navbar() {
             {/* Mobile Contact Us Gradient Button */}
             <Link
               href="/contact"
-              className="mt-2 block text-center rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md"
+              className="mt-2  block text-center rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md"
               onClick={closeMobileMenu}
             >
               CONTACT US
