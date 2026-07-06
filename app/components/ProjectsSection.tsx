@@ -13,7 +13,7 @@ import {
   Smartphone,
   X
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 
 // --- Types ---
 interface ProjectFile {
@@ -555,11 +555,13 @@ const FullscreenModal = ({ project, onClose }: FullscreenModalProps) => {
 interface ProjectsSectionProps {
   showHeader?: boolean;
   maxHeight?: string;
+  isEmbedded?: boolean;
 }
 
 export default function ProjectsSection({ 
   showHeader = true, 
-  maxHeight = "none" 
+  maxHeight = "none",
+  isEmbedded = false
 }: ProjectsSectionProps) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeCategory, setActiveCategory] = useState<'all' | 'app' | 'web'>('all');
@@ -571,9 +573,12 @@ export default function ProjectsSection({
   const appProjects = filteredProjects.filter(p => p.category === 'app');
   const webProjects = filteredProjects.filter(p => p.category === 'web');
 
-  const containerStyle = maxHeight !== "none" 
-    ? { maxHeight, overflowY: 'auto' } 
-    : {};
+  // Build container style properly for TypeScript
+  const containerStyle: CSSProperties = {};
+  if (maxHeight !== "none") {
+    containerStyle.maxHeight = maxHeight;
+    containerStyle.overflowY = "auto";
+  }
 
   return (
     <div className="relative">
@@ -602,7 +607,9 @@ export default function ProjectsSection({
           className={`px-6 py-2 rounded-full font-semibold transition-all ${
             activeCategory === 'all'
               ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              : isEmbedded 
+                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
           }`}
         >
           All Projects
@@ -612,7 +619,9 @@ export default function ProjectsSection({
           className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${
             activeCategory === 'app'
               ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              : isEmbedded 
+                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
           }`}
         >
           <Smartphone size={18} />
@@ -623,7 +632,9 @@ export default function ProjectsSection({
           className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${
             activeCategory === 'web'
               ? 'bg-linear-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              : isEmbedded 
+                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' 
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
           }`}
         >
           <Globe size={18} />
@@ -639,11 +650,13 @@ export default function ProjectsSection({
             {(activeCategory === 'all') && (
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-8 w-1 bg-linear-to-b from-purple-500 to-pink-500 rounded-full" />
-                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                  <Smartphone className="text-purple-400" />
+                <h2 className={`text-2xl font-bold flex items-center gap-2 ${isEmbedded ? 'text-slate-800' : 'text-white'}`}>
+                  <Smartphone className={isEmbedded ? 'text-purple-600' : 'text-purple-400'} />
                   App Prototypes
                 </h2>
-                <p className="text-gray-400 hidden md:inline">Built with Kotlin, Jetpack Compose & KMP</p>
+                <p className={isEmbedded ? 'text-slate-500 hidden md:inline' : 'text-gray-400 hidden md:inline'}>
+                  Built with Kotlin, Jetpack Compose & KMP
+                </p>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -665,11 +678,13 @@ export default function ProjectsSection({
             {(activeCategory === 'all') && (
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-8 w-1 bg-linear-to-b from-emerald-500 to-teal-500 rounded-full" />
-                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                  <Globe className="text-emerald-400" />
+                <h2 className={`text-2xl font-bold flex items-center gap-2 ${isEmbedded ? 'text-slate-800' : 'text-white'}`}>
+                  <Globe className={isEmbedded ? 'text-emerald-600' : 'text-emerald-400'} />
                   Web Prototypes
                 </h2>
-                <p className="text-gray-400 hidden md:inline">Built with React, Next.js, Node.js & Modern Stack</p>
+                <p className={isEmbedded ? 'text-slate-500 hidden md:inline' : 'text-gray-400 hidden md:inline'}>
+                  Built with React, Next.js, Node.js & Modern Stack
+                </p>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

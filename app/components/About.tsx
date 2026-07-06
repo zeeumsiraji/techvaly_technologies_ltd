@@ -1,22 +1,15 @@
+// app/about/page.tsx (or wherever your Hero component is)
 'use client';
 
-import Link from 'next/link';
 import { motion } from 'motion/react';
 import { Shield, UserCheck, Lock } from 'lucide-react';
-import ProjectsSection from './ProjectsSection';
+import ProjectsSection from '../components/ProjectsSection';
 
-export default function Hero () {
-  // (your existing services array if you have one – I'll include it)
-  const services = [
-    { icon: <Shield className="text-tiger-orange" size={24} />, text: 'Managed Security Services' },
-    { icon: <UserCheck className="text-tiger-orange" size={24} />, text: 'Identity and Access Management (IAM)' },
-    { icon: <Lock className="text-tiger-orange" size={24} />, text: 'Privileged Account Management (PAM)' },
-  ];
-
+export default function Hero() {
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* ===== About Section (unchanged) ===== */}
+        {/* About Section */}
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-start">
           <div>
             <h2 className="text-4xl sm:text-5xl font-bold text-slate-800 mb-6 sm:mb-8 tracking-tight">
@@ -102,15 +95,16 @@ export default function Hero () {
             </p>
           </motion.div>
 
-          {/* Scrollable container for projects */}
-          <div className="max-h-[800px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
-            <div className="bg-gray-900/5 backdrop-blur-sm rounded-3xl p-6 border border-slate-200">
-              <ProjectsSection />
-            </div>
+          <div className="bg-slate-50/80 backdrop-blur-sm rounded-3xl p-4 md:p-6 border border-slate-200">
+            <ProjectsSection 
+              showHeader={false} 
+              maxHeight="800px"
+              isEmbedded={true}
+            />
           </div>
         </div>
 
-        {/* ===== Building Software & Future Developers (unchanged) ===== */}
+        {/* ===== Building Software & Future Developers ===== */}
         <div className="mt-16 md:mt-24">
           <div className="text-center mb-12 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
@@ -148,7 +142,6 @@ export default function Hero () {
   );
 }
 
-// --- Bottom sections data (unchanged) ---
 const sections = [
   {
     title: 'Our Mission',
