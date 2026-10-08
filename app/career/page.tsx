@@ -217,8 +217,8 @@ export default function CareerPage() {
         style={{ backgroundImage: "url('/contactbg.jpg')" }}
       />
       <div className="fixed inset-0 -z-10 bg-black/10" />
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-800/40 via-transparent to-transparent" />
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent" />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-slate-800/40 via-transparent to-transparent" />
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_bottom_left,var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent" />
 
       <div className="max-w-7xl mx-auto">
         {/* Hero Header */}

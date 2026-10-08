@@ -1,8 +1,8 @@
 'use client'
 
-import About from './components/About'
-import Hero from './components/Hero'
-import Integrations from './components/Integrations'
+import About from '@/components/About'
+import Hero from '@/components/Hero'
+import Integrations from '@/components/Integrations'
 
 export default function Home() {
   return (

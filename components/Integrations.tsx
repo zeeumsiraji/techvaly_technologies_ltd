@@ -137,7 +137,7 @@ export default function Integrations() {
         </motion.div>
 
         {/* Visual Display */}
-        <div className="relative w-full h-[280px] sm:h-[360px] md:h-[420px] mt-8 md:mt-12 flex items-center justify-center select-none">
+        <div className="relative w-full h-70 sm:h-90 md:h-105 mt-8 md:mt-12 flex items-center justify-center select-none">
           {/* Arc SVG */}
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"

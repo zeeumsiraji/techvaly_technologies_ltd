@@ -3,9 +3,9 @@ import type { ReactNode } from 'react'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
-import Navbar from './components/Navigation/Topbar'
-import Footer from './components/Navigation/Footer'
-import FloatingChat from './components/Navigation/FloatingChat'
+import Navbar from '@/components/Navigation/Topbar'
+import Footer from '@/components/Navigation/Footer'
+import FloatingChat from '@/components/Navigation/FloatingChat'
 
 
 import { metadata, viewport, siteConfig } from './metadata.config'

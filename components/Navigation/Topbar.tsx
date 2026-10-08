@@ -95,10 +95,10 @@ export default function Navbar() {
             <Link
               key={item.name}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-800 transition hover:bg-sky-500/10 hover:text-orange-500"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white transition hover:bg-white/10 hover:text-orange-300"
               onClick={closeMobileMenu}
             >
-              {Icon && <Icon className="text-lg text-sky-600" />}
+              {Icon && <Icon className="text-lg text-white/80" />}
               <span>{item.name}</span>
             </Link>
           );
@@ -127,14 +127,14 @@ export default function Navbar() {
             priority
           />
           <div className="flex items-start">
-            <span className="italic text-green-600">BdSoft</span>
-            <span className="text-red-500 text-xs sm:text-sm select-none">®</span>
-            <span className="ml-0.5 text-xs text-green-600 sm:text-sm self-end mb-0.5">.org</span>
+            <span className="italic text-white">BdSoft</span>
+            <span className="text-white/70 text-xs sm:text-sm select-none">®</span>
+            <span className="ml-0.5 text-xs text-white/80 sm:text-sm self-end mb-0.5">.org</span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-5 md:flex lg:gap-8">
+        <div className="text-white hidden items-center gap-5 md:flex lg:gap-8">
           {navLinks.map((link) => {
             if (link.name === 'SOLUTIONS') {
               return (
@@ -154,7 +154,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm font-semibold tracking-wide text-slate-700 transition-colors hover:text-orange-500"
+                className="text-sm font-semibold tracking-wide text-white transition-colors hover:text-orange-300"
               >
                 {link.name}
               </Link>
@@ -164,7 +164,7 @@ export default function Navbar() {
           {/* Contact Us Gradient Button */}
           <Link
             href="/contact"
-            className="rounded-full text-white  from-sky-500 via-blue-500 to-indigo-600 px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-md hover:opacity-95 transition-opacity"
+            className="rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-md hover:opacity-95 transition-opacity"
           >
             CONTACT US
           </Link>
@@ -175,7 +175,7 @@ export default function Navbar() {
           type="button"
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMobileMenuOpen}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-700 transition hover:bg-sky-500/10 md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-white transition hover:bg-white/10 md:hidden"
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -184,7 +184,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute left-0 right-0 top-full max-h-[calc(100vh-72px)] overflow-y-auto border-t border-sky-100 bg-sky-50/95 shadow-xl backdrop-blur-md md:hidden rounded-b-[15px]">
+        <div className="absolute left-0 right-0 top-full max-h-[calc(100vh-72px)] overflow-y-auto border-t border-white/20 bg-sky-600/95 shadow-xl backdrop-blur-md md:hidden rounded-b-[15px]">
           <div className="flex flex-col gap-2 px-4 py-5 sm:px-6">
             {navLinks.map((link) => {
               const isOpen = openMobileDropdown === link.name;
@@ -194,16 +194,16 @@ export default function Navbar() {
                 const isSolution = link.name === 'SOLUTIONS';
 
                 return (
-                  <div key={link.name} className="rounded-xl bg-sky-500/5">
+                  <div key={link.name} className="rounded-xl bg-white/5">
                     <button
                       type="button"
                       onClick={() => toggleMobileDropdown(link.name)}
-                      className="flex w-full items-center justify-between px-3 py-3 text-base font-semibold text-slate-800"
+                      className="flex w-full items-center justify-between px-3 py-3 text-base font-semibold text-white"
                     >
                       <span>{link.name}</span>
                       <ChevronDown
                         size={18}
-                        className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                        className={`transition-transform text-white ${isOpen ? 'rotate-180' : ''}`}
                       />
                     </button>
 
@@ -220,7 +220,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="rounded-lg px-3 py-3 text-base font-semibold text-slate-800 transition hover:bg-sky-500/10 hover:text-orange-500"
+                  className="rounded-lg px-3 py-3 text-base font-semibold text-white transition hover:bg-white/10 hover:text-orange-300"
                   onClick={closeMobileMenu}
                 >
                   {link.name}
@@ -230,7 +230,7 @@ export default function Navbar() {
             {/* Mobile Contact Us Gradient Button */}
             <Link
               href="/contact"
-              className="mt-2  block text-center rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md"
+              className="mt-2 block text-center rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md"
               onClick={closeMobileMenu}
             >
               CONTACT US

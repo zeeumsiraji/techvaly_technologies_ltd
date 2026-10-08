@@ -249,7 +249,7 @@ export default function AutomationPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-cyan-900 to-blue-900">
+    <main className="min-h-screen bg-linear-to-br from-slate-900 via-cyan-900 to-blue-900">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 px-6">
         {/* Animated Background */}
@@ -273,7 +273,7 @@ export default function AutomationPage() {
             </div>
 
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
                 Automate Smarter
               </span>
               <br />
@@ -295,7 +295,7 @@ export default function AutomationPage() {
             transition={{ delay: 0.2 }}
             className="flex flex-wrap justify-center gap-4 mb-20"
           >
-            <button className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <button className="group px-8 py-4 rounded-2xl bg-linear-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
               Start Automation Journey
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -333,7 +333,7 @@ export default function AutomationPage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
                   {stat.value}
                 </div>
                 <div className="text-white font-semibold text-sm mb-1">{stat.label}</div>
@@ -368,9 +368,9 @@ export default function AutomationPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5 }}
-                className="group p-6 rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700 hover:border-cyan-500/50 transition-all duration-300"
+                className="group p-6 rounded-2xl bg-linear-to-br from-gray-800/50 to-gray-900/50 border border-gray-700 hover:border-cyan-500/50 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-cyan-500 to-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   {type.icon}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{type.title}</h3>
@@ -382,7 +382,7 @@ export default function AutomationPage() {
       </section>
 
       {/* Use Cases */}
-      <section className="px-6 py-24 bg-gradient-to-b from-cyan-900/20 to-transparent">
+      <section className="px-6 py-24 bg-linear-to-b from-cyan-900/20 to-transparent">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -407,7 +407,7 @@ export default function AutomationPage() {
                 className="p-6 rounded-2xl bg-gray-800/30 border border-gray-700 group hover:border-cyan-500/50 transition-all"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-linear-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
                     {useCase.icon}
                   </div>
                   <h3 className="text-white font-semibold group-hover:text-cyan-400 transition-colors">
@@ -450,7 +450,7 @@ export default function AutomationPage() {
                 transition={{ delay: index * 0.1 }}
                 className="p-6 rounded-2xl bg-gray-800/30 border border-gray-700"
               >
-                <h3 className={`text-xl font-bold bg-gradient-to-r ${tech.color} bg-clip-text text-transparent mb-4`}>
+                <h3 className={`text-xl font-bold bg-linear-to-r ${tech.color} bg-clip-text text-transparent mb-4`}>
                   {tech.category}
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -530,7 +530,7 @@ export default function AutomationPage() {
                 <div className="absolute top-4 right-4 text-4xl font-bold text-cyan-500/20">
                   {step.step}
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-cyan-500 to-blue-500 flex items-center justify-center mb-4">
                   {step.icon}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
@@ -546,7 +546,7 @@ export default function AutomationPage() {
       </section>
 
       {/* Success Stories */}
-      <section className="px-6 py-24 bg-gradient-to-b from-cyan-900/20 to-transparent">
+      <section className="px-6 py-24 bg-linear-to-b from-cyan-900/20 to-transparent">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -569,7 +569,7 @@ export default function AutomationPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 hover:border-cyan-500/50 transition-all duration-300"
+                className="p-6 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 hover:border-cyan-500/50 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -612,7 +612,7 @@ export default function AutomationPage() {
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Enterprise-Grade{' '}
-                <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   Automation Platform
                 </span>
               </h2>
@@ -636,8 +636,8 @@ export default function AutomationPage() {
               whileInView={{ opacity: 1, x: 0 }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-3xl blur-3xl opacity-20" />
-              <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border border-gray-700">
+              <div className="absolute inset-0 bg-linear-to-r from-cyan-500 to-blue-500 rounded-3xl blur-3xl opacity-20" />
+              <div className="relative bg-linear-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border border-gray-700">
                 <h3 className="text-2xl font-bold text-white text-center mb-6">Automation Maturity Model</h3>
                 <div className="space-y-4">
                   {automationMaturity.map((level, idx) => (
@@ -695,7 +695,7 @@ export default function AutomationPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-teal-600/20 rounded-3xl p-12 border border-cyan-500/30 text-center"
+            className="bg-linear-to-r from-cyan-600/20 via-blue-600/20 to-teal-600/20 rounded-3xl p-12 border border-cyan-500/30 text-center"
           >
             <DollarSign className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -704,7 +704,7 @@ export default function AutomationPage() {
             <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
               See how much you can save with intelligent automation
             </p>
-            <button className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
+            <button className="group px-8 py-4 rounded-2xl bg-linear-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
               Calculate Savings
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -719,17 +719,17 @@ export default function AutomationPage() {
           whileInView={{ opacity: 1, scale: 1 }}
           className="max-w-4xl mx-auto text-center"
         >
-          <div className="relative rounded-3xl bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-teal-600/20 p-12 border border-cyan-500/30">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-3xl blur-3xl opacity-10" />
+          <div className="relative rounded-3xl bg-linear-to-r from-cyan-600/20 via-blue-600/20 to-teal-600/20 p-12 border border-cyan-500/30">
+            <div className="absolute inset-0 bg-linear-to-r from-cyan-500 to-blue-500 rounded-3xl blur-3xl opacity-10" />
             <Bot className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Ready to Automate Your Business?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Let's identify the best automation opportunities for your organization
+              Let&apos;s identify the best automation opportunities for your organization
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
+              <button className="group px-8 py-4 rounded-2xl bg-linear-to-r from-cyan-500 to-blue-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
                 Start Automation Journey
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>

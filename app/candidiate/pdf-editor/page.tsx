@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { 
   Type, 
   Image as ImageIcon, 
@@ -58,284 +59,294 @@ export default function PDFEditorPage() {
   const canvasRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bgImageInputRef = useRef<HTMLInputElement>(null)
+  const initializedRef = useRef(false)
 
-  // Save to history
-  const saveToHistory = (newElements: ElementType[]) => {
-    const newHistory = history.slice(0, historyIndex + 1)
-    newHistory.push(JSON.parse(JSON.stringify(newElements)))
-    setHistory(newHistory)
-    setHistoryIndex(newHistory.length - 1)
-  }
+  // Save to history (useCallback to keep stable reference)
+  const saveToHistory = useCallback((newElements: ElementType[]) => {
+    setHistory(prevHistory => {
+      const sliced = prevHistory.slice(0, historyIndex + 1)
+      const newHistory = [...sliced, JSON.parse(JSON.stringify(newElements))]
+      setHistoryIndex(newHistory.length - 1)
+      return newHistory
+    })
+  }, [historyIndex])
 
   // Load appointment data from localStorage when component mounts
   useEffect(() => {
+    if (initializedRef.current) return
+    initializedRef.current = true
+
     const savedData = localStorage.getItem('appointmentDataForPDF')
-    if (savedData) {
-      const appointmentData = JSON.parse(savedData)
-      
-      const newElements: ElementType[] = [
-        {
-          id: Date.now().toString(),
-          type: 'text',
-          x: 50,
-          y: 50,
-          width: 400,
-          height: 40,
-          content: `PATIENT APPOINTMENT LETTER`,
-          fontSize: 24,
-          color: '#1e3a8a',
-          fontFamily: 'Arial',
-          bold: true,
-          italic: false,
-          underline: true,
-          align: 'center',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 1).toString(),
-          type: 'text',
-          x: 50,
-          y: 120,
-          width: 300,
-          height: 30,
-          content: `Patient Information`,
-          fontSize: 18,
-          color: '#3b82f6',
-          fontFamily: 'Arial',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 2).toString(),
-          type: 'text',
-          x: 50,
-          y: 165,
-          width: 300,
-          height: 25,
-          content: `Full Name: ${appointmentData.name}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 3).toString(),
-          type: 'text',
-          x: 50,
-          y: 200,
-          width: 300,
-          height: 25,
-          content: `Phone Number: ${appointmentData.phone}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 4).toString(),
-          type: 'text',
-          x: 50,
-          y: 235,
-          width: 400,
-          height: 25,
-          content: `Email Address: ${appointmentData.email}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 5).toString(),
-          type: 'text',
-          x: 50,
-          y: 270,
-          width: 400,
-          height: 25,
-          content: `Residential Address: ${appointmentData.address}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 6).toString(),
-          type: 'text',
-          x: 50,
-          y: 330,
-          width: 350,
-          height: 30,
-          content: `Appointment Details`,
-          fontSize: 18,
-          color: '#10b981',
-          fontFamily: 'Arial',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 7).toString(),
-          type: 'text',
-          x: 50,
-          y: 375,
-          width: 300,
-          height: 25,
-          content: `Date: ${new Date(appointmentData.appointmentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 8).toString(),
-          type: 'text',
-          x: 50,
-          y: 410,
-          width: 300,
-          height: 25,
-          content: `Time: ${appointmentData.appointmentTime}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 9).toString(),
-          type: 'text',
-          x: 50,
-          y: 445,
-          width: 300,
-          height: 25,
-          content: `Doctor: ${appointmentData.doctorName}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 10).toString(),
-          type: 'text',
-          x: 50,
-          y: 480,
-          width: 300,
-          height: 25,
-          content: `Purpose: ${appointmentData.purpose}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 11).toString(),
-          type: 'text',
-          x: 50,
-          y: 515,
-          width: 400,
-          height: 25,
-          content: `Location: ${appointmentData.location}`,
-          fontSize: 13,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 12).toString(),
-          type: 'text',
-          x: 50,
-          y: 580,
-          width: 500,
-          height: 30,
-          content: `Important Instructions`,
-          fontSize: 16,
-          color: '#f59e0b',
-          fontFamily: 'Arial',
-          bold: true,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        },
-        {
-          id: (Date.now() + 13).toString(),
-          type: 'text',
-          x: 50,
-          y: 625,
-          width: 500,
-          height: 100,
-          content: `• Please arrive 15 minutes before your scheduled appointment time.\n• Bring any relevant medical records or identification.\n• If you need to reschedule, please contact us at least 24 hours in advance.\n• For any emergencies, please call our emergency hotline: +8801977173707`,
-          fontSize: 12,
-          color: '#000000',
-          fontFamily: 'Arial',
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left',
-          rotation: 0,
-          opacity: 1
-        }
-      ]
-      
+    if (!savedData) return
+
+    const appointmentData = JSON.parse(savedData)
+
+    const newElements: ElementType[] = [
+      {
+        id: Date.now().toString(),
+        type: 'text',
+        x: 50,
+        y: 50,
+        width: 400,
+        height: 40,
+        content: `PATIENT APPOINTMENT LETTER`,
+        fontSize: 24,
+        color: '#1e3a8a',
+        fontFamily: 'Arial',
+        bold: true,
+        italic: false,
+        underline: true,
+        align: 'center',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 1).toString(),
+        type: 'text',
+        x: 50,
+        y: 120,
+        width: 300,
+        height: 30,
+        content: `Patient Information`,
+        fontSize: 18,
+        color: '#3b82f6',
+        fontFamily: 'Arial',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 2).toString(),
+        type: 'text',
+        x: 50,
+        y: 165,
+        width: 300,
+        height: 25,
+        content: `Full Name: ${appointmentData.name}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 3).toString(),
+        type: 'text',
+        x: 50,
+        y: 200,
+        width: 300,
+        height: 25,
+        content: `Phone Number: ${appointmentData.phone}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 4).toString(),
+        type: 'text',
+        x: 50,
+        y: 235,
+        width: 400,
+        height: 25,
+        content: `Email Address: ${appointmentData.email}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 5).toString(),
+        type: 'text',
+        x: 50,
+        y: 270,
+        width: 400,
+        height: 25,
+        content: `Residential Address: ${appointmentData.address}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 6).toString(),
+        type: 'text',
+        x: 50,
+        y: 330,
+        width: 350,
+        height: 30,
+        content: `Appointment Details`,
+        fontSize: 18,
+        color: '#10b981',
+        fontFamily: 'Arial',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 7).toString(),
+        type: 'text',
+        x: 50,
+        y: 375,
+        width: 300,
+        height: 25,
+        content: `Date: ${new Date(appointmentData.appointmentDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 8).toString(),
+        type: 'text',
+        x: 50,
+        y: 410,
+        width: 300,
+        height: 25,
+        content: `Time: ${appointmentData.appointmentTime}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 9).toString(),
+        type: 'text',
+        x: 50,
+        y: 445,
+        width: 300,
+        height: 25,
+        content: `Doctor: ${appointmentData.doctorName}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 10).toString(),
+        type: 'text',
+        x: 50,
+        y: 480,
+        width: 300,
+        height: 25,
+        content: `Purpose: ${appointmentData.purpose}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 11).toString(),
+        type: 'text',
+        x: 50,
+        y: 515,
+        width: 400,
+        height: 25,
+        content: `Location: ${appointmentData.location}`,
+        fontSize: 13,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 12).toString(),
+        type: 'text',
+        x: 50,
+        y: 580,
+        width: 500,
+        height: 30,
+        content: `Important Instructions`,
+        fontSize: 16,
+        color: '#f59e0b',
+        fontFamily: 'Arial',
+        bold: true,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      },
+      {
+        id: (Date.now() + 13).toString(),
+        type: 'text',
+        x: 50,
+        y: 625,
+        width: 500,
+        height: 100,
+        content: `• Please arrive 15 minutes before your scheduled appointment time.\n• Bring any relevant medical records or identification.\n• If you need to reschedule, please contact us at least 24 hours in advance.\n• For any emergencies, please call our emergency hotline: +8801977173707`,
+        fontSize: 12,
+        color: '#000000',
+        fontFamily: 'Arial',
+        bold: false,
+        italic: false,
+        underline: false,
+        align: 'left',
+        rotation: 0,
+        opacity: 1
+      }
+    ]
+
+    localStorage.removeItem('appointmentDataForPDF')
+
+    // Defer state updates to avoid synchronous setState in effect
+    queueMicrotask(() => {
       setElements(newElements)
       saveToHistory(newElements)
-      localStorage.removeItem('appointmentDataForPDF')
-      
       setTimeout(() => {
         alert('✓ Appointment data loaded! You can now edit, add images, change background, and customize the letter.')
       }, 500)
-    }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Undo/Redo
@@ -801,7 +812,14 @@ export default function PDFEditorPage() {
             </button>
             {background.type === 'image' && (
               <div className="mt-2">
-                <img src={background.value} alt="Background" className="w-full h-32 object-cover rounded" />
+                <Image 
+                  src={background.value} 
+                  alt="Background" 
+                  width={288} 
+                  height={128} 
+                  className="w-full h-32 object-cover rounded" 
+                  unoptimized 
+                />
                 <button onClick={() => setBackground({ type: 'color', value: '#ffffff' })} className="text-xs text-red-500 mt-1">Remove Background Image</button>
               </div>
             )}
@@ -840,6 +858,7 @@ export default function PDFEditorPage() {
                   </div>
                 )
               ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={element.src} alt="Element" className="w-full h-full object-contain" draggable={false} />
               )}
               

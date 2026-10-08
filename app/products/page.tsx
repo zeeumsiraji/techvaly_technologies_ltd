@@ -1,7 +1,7 @@
 // app/products/page.tsx
 'use client';
 
-import ProjectsSection from '../components/ProjectsSection';
+import ProjectsSection from '@/components/ProjectsSection';
 
 export default function ProjectsPage() {
   return (

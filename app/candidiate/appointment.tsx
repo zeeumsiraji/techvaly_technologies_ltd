@@ -2,7 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { generateAppointmentLetterHTML, AppointmentFormData } from './appointmentLetterUtils'
+// Define or import AppointmentFormData locally if appointmentLetterUtils does not exist yet
+export type AppointmentFormData = {
+  name: string
+  phone: string
+  email: string
+  address: string
+  appointmentDate: string
+  appointmentTime: string
+  doctorName: string
+  purpose: string
+  location: string
+}
 
 type ApplicationData = {
   name: string
@@ -23,7 +34,6 @@ interface AppointmentModalProps {
 
 export default function AppointmentModal({ isOpen, onClose, applicationData }: AppointmentModalProps) {
   const router = useRouter()
-  const [generatingPdf, setGeneratingPdf] = useState(false)
   const [sendingEmail, setSendingEmail] = useState(false)
   const [appointmentData, setAppointmentData] = useState<AppointmentFormData>({
     name: '',
@@ -40,7 +50,7 @@ export default function AppointmentModal({ isOpen, onClose, applicationData }: A
   // Update form when application data changes
   useEffect(() => {
     if (applicationData) {
-      setAppointmentData(prev => ({
+      setAppointmentData((prev: AppointmentFormData) => ({
         ...prev,
         name: applicationData.name || '',
         phone: applicationData.number || '',
@@ -52,7 +62,7 @@ export default function AppointmentModal({ isOpen, onClose, applicationData }: A
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setAppointmentData(prev => ({ ...prev, [name]: value }))
+    setAppointmentData((prev: AppointmentFormData) => ({ ...prev, [name]: value }))
   }
 
   // Navigate to PDF editor with appointment data

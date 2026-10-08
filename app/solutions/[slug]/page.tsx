@@ -271,7 +271,7 @@ export default async function SolutionDetailPage({ params }: Props) {
         </div>
 
         {/* Benefits */}
-        <div className="mb-12 p-6 rounded-2xl bg-gradient-to-r from-tiger-orange/10 to-transparent border border-tiger-orange/20">
+        <div className="mb-12 p-6 rounded-2xl bg-linear-to-r from-tiger-orange/10 to-transparent border border-tiger-orange/20">
           <h2 className="text-2xl font-semibold mb-4 text-tiger-orange">Why Choose This Solution?</h2>
           <div className="grid md:grid-cols-2 gap-3">
             {solution.benefits.map((benefit, idx) => (

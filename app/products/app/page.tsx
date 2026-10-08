@@ -1,172 +1,18 @@
-'use client'
+// app/page.tsx
+import ProjectsSection from '@/components/ProjectsSection'; // Adjust path if needed
 
-import Link from 'next/link'
-import { motion } from 'motion/react'
-import { Shield, UserCheck, Lock, ArrowRight } from 'lucide-react'
-
-export default function Hero() {
-  const services = [
-    { icon: <Shield className="text-tiger-orange" size={24} />, text: 'Managed Security Services' },
-    { icon: <UserCheck className="text-tiger-orange" size={24} />, text: 'Identity and Access Management (IAM)' },
-    { icon: <Lock className="text-tiger-orange" size={24} />, text: 'Privileged Account Management (PAM)' },
-  ]
-
+export default function AppPage() {
   return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* About Section (unchanged) */}
-        <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-start">
-          <div>
-            <h2 className="text-4xl sm:text-5xl font-bold text-slate-800 mb-6 sm:mb-8 tracking-tight">
-              About BdSoft.org
-            </h2>
-            <p className="text-lg sm:text-xl text-slate-600 leading-relaxed mb-6">
-              <span className="font-semibold text-slate-900">BdSoft.org</span>{' '}
-              is a modern software company focused on building innovative
-              digital solutions while helping freshers become skilled and
-              confident{' '}
-              <span className="font-bold text-slate-900 underline decoration-tiger-orange/30 underline-offset-4">
-                senior developers
-              </span>
-              .
-            </p>
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-6">
-              We believe real growth comes through practical experience,
-              teamwork, mentorship, and continuous learning. Our goal is not
-              only to create high-quality software products but also to build
-              future technology leaders through real-world development
-              environments.
-            </p>
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              BdSoft.org works on web applications, mobile apps, SaaS
-              platforms, business software, APIs, automation systems, and
-              custom software solutions. Alongside client projects, we also
-              develop our own innovative products designed to solve real-world
-              problems.
-            </p>
-          </div>
-
-          {/* Right Column - Highlights (unchanged) */}
-          <div className="flex flex-col justify-center h-full">
-            <div className="space-y-10">
-              <div>
-                <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-tiger-orange leading-tight">
-                  Fresher to Senior Developer
-                </h3>
-                <p className="text-base sm:text-lg text-slate-500 mt-3 font-medium leading-relaxed">
-                  Practical learning, mentorship, real projects, and
-                  team-based development experience.
-                </p>
-              </div>
-
-              <div className="pt-2">
-                <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold text-tiger-orange tracking-tighter leading-none">
-                  Innovation <br /> Teamwork <br /> Growth
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 sm:gap-6 pt-4">
-                <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100">
-                  <h4 className="text-2xl sm:text-3xl font-bold text-slate-800">Real</h4>
-                  <p className="text-sm sm:text-base text-slate-500 mt-2">
-                    Industry-level software development experience.
-                  </p>
-                </div>
-                <div className="bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-100">
-                  <h4 className="text-2xl sm:text-3xl font-bold text-slate-800">Team</h4>
-                  <p className="text-sm sm:text-base text-slate-500 mt-2">
-                    Collaborative workflow and agile development culture.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* NEW: Call-to-Action replacing the solutions grid */}
-        <div className="mt-16 md:mt-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
-              Explore Our Projects
-            </h2>
-            <p className="mt-3 md:mt-4 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
-              See how we build cross‑platform apps, web solutions, and enterprise software
-              – all with modern technology and a focus on quality.
-            </p>
-            <Link href="/projects/app">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="mt-8 inline-flex items-center gap-3 px-8 py-4 bg-tiger-orange text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all"
-              >
-                View All Projects
-                <ArrowRight className="w-5 h-5" />
-              </motion.button>
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Building Software & Future Developers Section (unchanged) */}
-        <div className="mt-16 md:mt-24">
-          <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
-              Building Software & Future Developers
-            </h2>
-            <p className="mt-4 md:mt-6 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
-              BdSoft.org is focused on innovation, teamwork, practical learning,
-              and building scalable digital solutions for the modern world.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-            {sections.map((section, index) => (
-              <div
-                key={section.title}
-                className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300"
-              >
-                <div className="mb-4 sm:mb-6">
-                  <span className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-tiger-orange/10 text-tiger-orange text-xl sm:text-2xl font-bold">
-                    {/* optional icon */}
-                  </span>
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3 sm:mb-5 leading-tight">
-                  {section.title}
-                </h3>
-                <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-                  {section.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
+    <main className="min-h-screen bg-gray-950 p-6 md:p-12">
+      {/* 
+        isEmbedded={false} (Default) 
+        - Uses dark theme styles (text-white, dark cards).
+        - Shows the "Our Projects" header.
+      */}
+      <ProjectsSection 
+        showHeader={true} 
+        isEmbedded={false} 
+      />
+    </main>
+  );
 }
-
-const sections = [
-  {
-    title: 'Our Mission',
-    description:
-      'Our mission is to empower freshers with real-world software development experience and transform them into skilled senior developers. We aim to build innovative digital products, deliver high-quality software solutions, and create a collaborative environment where developers grow through teamwork, mentorship, and continuous learning.',
-  },
-  {
-    title: 'What We Do',
-    description:
-      'BdSoft.org develops modern software solutions including web applications, mobile apps, SaaS platforms, business management systems, APIs, automation tools, and custom software products. We work on both client projects and in-house products while maintaining modern development standards, scalable architecture, and user-focused experiences.',
-  },
-  {
-    title: 'Our Learning & Growth Culture',
-    description:
-      'At BdSoft.org, learning happens through practical work, real projects, and team collaboration. We focus on mentorship, clean coding practices, agile workflows, communication skills, and problem-solving abilities. Our developers gain hands-on experience by working in teams, contributing to live projects, participating in code reviews, and continuously improving their technical and professional skills.',
-  },
-  {
-    title: 'Why Choose BdSoft.org',
-    description:
-      'BdSoft.org combines innovation, teamwork, and practical experience to build both great software and great developers. We provide a supportive environment for learning, modern technologies for scalable solutions, collaborative team culture, and a strong focus on quality, growth, and long-term success.',
-  },
-]

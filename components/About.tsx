@@ -2,8 +2,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Shield, UserCheck, Lock } from 'lucide-react';
-import ProjectsSection from '../components/ProjectsSection';
+import ProjectsSection from '@/components/ProjectsSection';
 
 export default function Hero() {
   return (
