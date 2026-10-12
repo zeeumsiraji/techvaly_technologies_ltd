@@ -56,7 +56,7 @@ export const projects: Project[] = [
     color: "teal",
     demoLinks: [
       { type: 'web', url: 'https://nursing-care.bdsoft.org/', label: 'Live Website' },
-      { type: 'web', url: '#', label: 'Admin Panel' }
+      { type: 'web', url: 'https://nursing-care.bdsoft.org/admin/login', label: 'Admin Panel' }
     ],
     projectFile: {
       name: "Nursing_Care_Overview.pdf",
@@ -90,7 +90,7 @@ export const projects: Project[] = [
     color: "orange",
     demoLinks: [
       { type: 'web', url: 'https://sparq.bdsoft.org/', label: 'Live Website' },
-      { type: 'web', url: '#', label: 'Admin Panel' }
+      { type: 'web', url: 'https://sparq.bdsoft.org/auth/login', label: 'Admin Panel' }
     ],
     projectFile: {
       name: "Electric_Services_Guide.pdf",
@@ -134,38 +134,39 @@ export const projects: Project[] = [
     }
   },
 
-  // ==================== APP Projects ====================
+// ==================== Real Estate Projects ====================
   {
     id: 4,
-    title: "Student Support APP",
-    category: 'app',
-    shortDesc: "Comprehensive school/college management system",
-    fullDesc: "A complete ecosystem for educational institutions that streamlines admissions, academics, finance, and communication. Features include exam management, attendance tracking, online classes, parental communication, and homework submission with live editing capabilities. Built with modern Kotlin and KMP for cross-platform compatibility.",
-    techStack: ["Kotlin", "Jetpack Compose", "KMP", "Android", "iOS", "MacOS", "Linux"],
-    bgGradient: "from-blue-600 to-purple-600",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop",
+    title: "Real Estate & Property Management Platform",
+    category: 'web',
+    shortDesc: "Comprehensive property buying, selling, and management ecosystem",
+    fullDesc: "A complete digital marketplace and management ecosystem for real estate agencies and property developers. Streamlines property listings, virtual tours, agent management, client lead tracking, automated bookings, and secure financial transactions. Built with modern full-stack technologies for seamless cross-platform performance across web and mobile devices.",
+    techStack: ["React", "Node.js", "Tailwind CSS", "MongoDB", "Express", "Firebase", "Flutter"],
+    bgGradient: "from-emerald-600 to-teal-700",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop",
     features: [
-      "Student Admission & Admit Card Download",
-      "Exam Updates (Routine, Semester, Results)",
-      "Class Monitoring with Daily Updates",
-      "Financial Updates & Multiple Payment Gateways",
-      "Attendance Monitoring System",
-      "Online Classes Integration",
-      "Parental Chat Box",
-      "Homework Submit & Live Edit"
+      "Advanced Property Search & Filter (Location, Price, Type)",
+      "Interactive Property Maps & Virtual Tour Integration",
+      "Agent & Broker Directory with Direct Messaging",
+      "Booking & Schedule Management for Site Visits",
+      "Financial Calculator (Mortgage, Down Payment, ROI)",
+      "Secure Online Payment & Booking Fee Gateways",
+      "Client Lead Tracking & CRM Dashboard",
+      "Owner & Tenant Portals for Maintenance Requests"
     ],
-    color: "blue",
+    color: "emerald",
     demoLinks: [
-      { type: 'app', url: '#', label: 'Android App Demo' },
-      { type: 'web', url: '#', label: 'Web Dashboard Demo' }
+      { type: 'web', url: 'https://real-estate.bdsoft.org/', label: 'Live Website Demo' },
+      { type: 'app', url: '#', label: 'Mobile App Demo' }
     ],
     projectFile: {
-      name: "Student_Support_APP_Overview.pdf",
-      url: "/projects/student-support-app.pdf",
+      name: "Real_Estate_Platform_Overview.pdf",
+      url: "/projects/real-estate-platform.pdf",
       type: "application/pdf",
-      size: "2.5 MB"
+      size: "2.8 MB"
     }
   },
+
   {
     id: 5,
     title: "Mobile Banking System",
