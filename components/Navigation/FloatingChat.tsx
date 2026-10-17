@@ -1,577 +1,806 @@
-// components/ProjectsSection.tsx
-'use client';
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { FormEvent, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import {
-  ArrowRight,
-  CheckCircle,
-  Download,
+  MessageCircle,
+  X,
+  Send,
+  Check,
+  Image as ImageIcon,
+  Paperclip,
+  Mic,
+  Square,
+  Trash2,
+  RefreshCw,
   ExternalLink,
-  Eye,
-  FileText,
-  Globe,
-  Smartphone,
-  Sparkles,
-  X
-} from 'lucide-react';
-import { useState, CSSProperties } from 'react';
+  Download,
+} from "lucide-react";
+import {
+  formatFileSize,
+  validateImage,
+  validateFile,
+  validateVoice,
+  validateTotal,
+} from "@/lib/upload";
 
-// ✅ Single Source of Truth — lib/projects থেকে import
-import { projects, type Project } from '@/lib/projects';
-
-// --- Project Card Component ---
-interface ProjectCardProps {
-  project: Project;
-  index: number;
-  onHover: (project: Project | null) => void;
+// ... Types & Interfaces আগের মতোই থাকবে ...
+interface ChatAttachment {
+  type: "image" | "file" | "voice";
+  name: string;
+  size: number;
+  url?: string;
 }
 
-const ProjectCard = ({ project, index, onHover }: ProjectCardProps) => {
-  const getIcon = () => {
-    if (project.featured) {
-      return <Sparkles className="w-5 h-5 text-yellow-300" />;
+interface ChatMessage {
+  id: string;
+  text: string;
+  from: "user" | "admin";
+  timestamp: Date;
+  sourceId?: string;
+  attachments?: ChatAttachment[];
+}
+
+interface VisitorInfo {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+const STORAGE_KEY = "bdsoft_chat_history";
+const USER_KEY = "bdsoft_chat_user";
+const SEEN_KEY = "bdsoft_chat_seen_replies";
+
+export default function FloatingChat() {
+  const [open, setOpen] = useState(false);
+  const [visitor, setVisitor] = useState<VisitorInfo>({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [images, setImages] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [voice, setVoice] = useState<Blob | null>(null);
+  const [showAttachments, setShowAttachments] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // ... (আগের সব useEffect এবং Functions এখানে থাকবে, আমি নিচে শুধু UI-তে পরিবর্তন করেছি) ...
+  
+  // নিচের রিটার্ন অংশটুকু সম্পূর্ণ পরিবর্তন করা হয়েছে
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as ChatMessage[];
+        setMessages(
+          parsed.map((m) => ({ ...m, timestamp: new Date(m.timestamp) }))
+        );
+      }
+      const rawUser = localStorage.getItem(USER_KEY);
+      if (rawUser) setVisitor(JSON.parse(rawUser));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        const safe = messages.map((m) => ({
+          ...m,
+          timestamp: m.timestamp,
+          attachments: m.attachments?.map((a) => ({
+            ...a,
+            url: a.url && a.url.startsWith("http") ? a.url : undefined,
+          })),
+        }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(safe));
+      } catch {}
     }
-    if (project.category === 'app') {
-      return <Smartphone className="w-5 h-5 text-purple-400" />;
+  }, [messages]);
+
+  useEffect(() => {
+    if (visitor.email) {
+      localStorage.setItem(USER_KEY, JSON.stringify(visitor));
     }
-    return <Globe className="w-5 h-5 text-emerald-400" />;
+  }, [visitor]);
+
+  useEffect(() => {
+    if (open && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, open, showAttachments]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, []);
+
+  const fetchAdminReplies = async () => {
+    if (!visitor.email) return;
+    try {
+      setRefreshing(true);
+      const res = await fetch(
+        `/api/chat/replies?email=${encodeURIComponent(visitor.email)}`
+      );
+      const json = await res.json();
+      if (!json.ok) return;
+
+      const seenRaw = localStorage.getItem(SEEN_KEY);
+      const seenIds: string[] = seenRaw ? JSON.parse(seenRaw) : [];
+
+      const newReplies: ChatMessage[] = (json.replies as {
+        id: string;
+        message: string;
+        attachments?: { name: string; mimeType: string; url: string }[];
+        date: string;
+      }[])
+        .filter((r) => !seenIds.includes(r.id))
+        .filter(
+          (r) =>
+            (r.message && r.message.trim()) ||
+            (r.attachments && r.attachments.length > 0)
+        )
+        .map((r) => {
+          const classified: ChatAttachment[] = (r.attachments ?? []).map(
+            (a) => {
+              let type: "image" | "file" | "voice" = "file";
+              if (a.mimeType.startsWith("image/")) type = "image";
+              else if (a.mimeType.startsWith("audio/")) type = "voice";
+              return { type, name: a.name, size: 0, url: a.url };
+            }
+          );
+          return {
+            id: crypto.randomUUID(),
+            sourceId: r.id,
+            text:
+              r.message.trim() ||
+              (classified.length > 0
+                ? `(${classified.length} attachment)`
+                : "(empty)"),
+            from: "admin" as const,
+            timestamp: new Date(r.date),
+            attachments: classified,
+          };
+        });
+
+      if (newReplies.length > 0) {
+        setMessages((prev) => [...prev, ...newReplies]);
+        const newSeen = [...seenIds, ...newReplies.map((r) => r.sourceId!)];
+        localStorage.setItem(SEEN_KEY, JSON.stringify(newSeen));
+      }
+    } catch {
+    } finally {
+      setRefreshing(false);
+    }
   };
 
-  const getCategoryColor = () => {
-    if (project.featured) {
-      return 'bg-linear-to-r from-yellow-400 to-pink-500';
+  useEffect(() => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    if (open && visitor.email) {
+      fetchAdminReplies();
+      pollRef.current = setInterval(fetchAdminReplies, 10000);
     }
-    return project.category === 'app'
-      ? 'bg-linear-to-r from-purple-500 to-pink-500'
-      : 'bg-linear-to-r from-emerald-500 to-teal-500';
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, visitor.email]);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
+    const list = Array.from(e.target.files ?? []);
+    const valid: File[] = [];
+    for (const f of list) {
+      const err = validateImage(f);
+      if (err) {
+        setError(err);
+        continue;
+      }
+      valid.push(f);
+    }
+    setImages((prev) => [...prev, ...valid]);
+    if (imageInputRef.current) imageInputRef.current.value = "";
   };
 
-  const getCategoryLabel = () => {
-    if (project.featured) return 'FEATURED';
-    return project.category === 'app' ? 'APP' : 'WEB';
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
+    const list = Array.from(e.target.files ?? []);
+    const valid: File[] = [];
+    for (const f of list) {
+      const err = validateFile(f);
+      if (err) {
+        setError(err);
+        continue;
+      }
+      valid.push(f);
+    }
+    setFiles((prev) => [...prev, ...valid]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const startRecording = async () => {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const err = validateVoice(blob);
+        if (err) setError(err);
+        else setVoice(blob);
+        stream.getTracks().forEach((t) => t.stop());
+      };
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setRecording(true);
+      setRecordingSeconds(0);
+      timerRef.current = setInterval(() => {
+        setRecordingSeconds((s) => s + 1);
+      }, 1000);
+    } catch {
+      setError("Microphone access denied");
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorderRef.current?.stop();
+    setRecording(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const fmtTimeShort = (s: number) =>
+    `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
+  const clearAttachments = () => {
+    setImages([]);
+    setFiles([]);
+    setVoice(null);
+    setShowAttachments(false);
+  };
+
+  const hasAttachments =
+    images.length > 0 || files.length > 0 || voice !== null;
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!visitor.name.trim() || !visitor.email.trim() || !visitor.phone.trim()) {
+      setError("নাম, ইমেইল ও ফোন — সব দিন");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(visitor.email)) {
+      setError("সঠিক ইমেইল দিন");
+      return;
+    }
+    if (!message.trim() && !hasAttachments) {
+      setError("Message বা attachment দিন");
+      return;
+    }
+    const totalErr = validateTotal([...images, ...files], voice);
+    if (totalErr) {
+      setError(totalErr);
+      return;
+    }
+
+    const localAttachments: ChatAttachment[] = [
+      ...images.map((f) => ({
+        type: "image" as const,
+        name: f.name,
+        size: f.size,
+        url: URL.createObjectURL(f),
+      })),
+      ...files.map((f) => ({
+        type: "file" as const,
+        name: f.name,
+        size: f.size,
+        url: URL.createObjectURL(f),
+      })),
+      ...(voice
+        ? [
+            {
+              type: "voice" as const,
+              name: "voice.webm",
+              size: voice.size,
+              url: URL.createObjectURL(voice),
+            },
+          ]
+        : []),
+    ];
+
+    const userMsg: ChatMessage = {
+      id: crypto.randomUUID(),
+      text: message || "(attachment)",
+      from: "user",
+      timestamp: new Date(),
+      attachments: localAttachments,
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setMessage("");
+    setSending(true);
+
+    try {
+      const fd = new FormData();
+      fd.append("from", visitor.name);
+      fd.append("email", visitor.email);
+      fd.append("phone", visitor.phone);
+      fd.append("subject", "Live Chat");
+      fd.append("body", message || "(attachment only)");
+      fd.append("source", "Live Chat");
+
+      images.forEach((f) => fd.append("images", f));
+      files.forEach((f) => fd.append("files", f));
+      if (voice) fd.append("voice", voice, "voice.webm");
+
+      const res = await fetch("/api/chat", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error ?? "Failed");
+
+      clearAttachments();
+      setTimeout(fetchAdminReplies, 500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const fmtTime = (d: Date) =>
+    d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+  // ==========================================
+  // 🌟 FIXED UI SECTION (text-left, flex-col etc.) 🌟
+  // ==========================================
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      whileHover={{ y: -8 }}
-      className={`relative group cursor-pointer ${
-        project.featured ? 'md:col-span-2 lg:col-span-3' : ''
-      }`}
-      onClick={() => onHover(project)}
-    >
-      <motion.div
-        className={`relative overflow-hidden rounded-2xl bg-linear-to-br ${project.bgGradient} p-px ${
-          project.featured ? 'shadow-2xl shadow-purple-500/30' : ''
-        }`}
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.3 }}
+    <div className="text-left font-sans">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-label={open ? "Close chat" : "Open chat"}
+        className="fixed bottom-6 right-6 z-9999 rounded-full bg-green-600 p-4 text-white shadow-2xl transition-all duration-300 hover:bg-green-700"
       >
-        <div className={`relative ${project.featured ? 'h-72 md:h-80' : 'h-80'} rounded-2xl bg-gray-900/90 backdrop-blur-sm p-6 flex flex-col justify-between`}>
-          {/* Background Image with Overlay */}
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: `url(${project.image})` }}
-          />
+        {open ? <X size={28} /> : <MessageCircle size={28} />}
+      </button>
 
-          {/* Category Badge */}
-          <div className="absolute top-4 right-4 z-10">
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white ${getCategoryColor()}`}>
-              {project.featured ? <Sparkles size={12} /> : project.category === 'app' ? <Smartphone size={12} /> : <Globe size={12} />}
-              {getCategoryLabel()}
-            </span>
+      {open && (
+        <div className="fixed bottom-24 right-6 z-9999 flex h-[calc(100vh-140px)] max-h-170 w-100 flex-col overflow-hidden rounded-[35px] border border-gray-700 bg-white shadow-2xl">
+          
+          {/* Header */}
+          <div className="flex shrink-0 items-center justify-between border-b bg-white px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Image
+                  src="/masud.png"
+                  alt="Support"
+                  width={48}
+                  height={48}
+                  className="rounded-full object-cover"
+                  priority
+                />
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+              </div>
+              <div className="text-left">
+                <h2 className="text-[22px] font-semibold leading-none text-black">
+                  BdSoft Support
+                </h2>
+                <p className="mt-1 text-xs text-gray-500">
+                  🟢 Usually replies in 5 min
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-gray-500">
+              <button
+                type="button"
+                onClick={fetchAdminReplies}
+                disabled={refreshing || !visitor.email}
+                className="p-1.5 hover:bg-slate-100 rounded disabled:opacity-40"
+                title="Refresh replies"
+              >
+                <RefreshCw
+                  size={16}
+                  className={refreshing ? "animate-spin" : ""}
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close chat"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
-          {/* Content */}
-          <div className={`relative z-10 ${project.featured ? 'md:max-w-3xl' : ''}`}>
-            <div className="mb-4">
-              <div className={`inline-flex p-2 rounded-lg bg-${project.color}-500/20 backdrop-blur-sm mb-3`}>
-                {getIcon()}
+          {/* Messages */}
+          <div
+            ref={scrollRef}
+            className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[#f5f5f5] p-4 text-left"
+          >
+            <div>
+              <div className="max-w-70 rounded-3xl bg-[#e9e9e9] p-4">
+                <p className="text-[15px] leading-relaxed text-black">
+                  👋 স্বাগতম! আপনার নাম, ইমেইল ও ফোন দিয়ে message পাঠান —
+                  আমরা দ্রুত reply দিব।
+                </p>
               </div>
-              <h3 className={`font-bold text-white mb-2 ${project.featured ? 'text-2xl md:text-3xl' : 'text-xl'}`}>
-                {project.title}
-              </h3>
-              <p className={`text-gray-300 line-clamp-2 ${project.featured ? 'text-base md:text-lg' : 'text-sm'}`}>
-                {project.shortDesc}
-              </p>
+              <p className="mt-2 text-xs text-gray-500">BdSoft • now</p>
             </div>
 
-            {/* Tech Stack */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {project.techStack.slice(0, project.featured ? 6 : 4).map((tech: string, idx: number) => (
-                <span key={idx} className="text-xs px-2 py-1 rounded-full bg-white/10 text-gray-300 backdrop-blur-sm">
-                  {tech}
-                </span>
-              ))}
-              {project.techStack.length > (project.featured ? 6 : 4) && (
-                <span className="text-xs px-2 py-1 rounded-full bg-white/10 text-gray-300">
-                  +{project.techStack.length - (project.featured ? 6 : 4)}
+            {messages.map((m) => (
+              <div key={m.id} className={m.from === "user" ? "text-right" : "text-left"}>
+                <div
+                  className={`inline-block max-w-72.5 rounded-3xl p-3 text-left ${
+                    m.from === "user"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-800 shadow-sm border border-slate-100"
+                  }`}
+                >
+                  {m.from === "admin" && (
+                    <p className="text-[10px] font-semibold text-blue-600 mb-1">
+                      👨‍💼 Admin Reply
+                    </p>
+                  )}
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">
+                    {m.text}
+                  </p>
+                  {m.attachments && m.attachments.length > 0 && (
+                    <div className="mt-2 space-y-1.5 border-t border-white/20 pt-2">
+                      {m.attachments.map((a, i) => (
+                        <AttachmentBubble
+                          key={i}
+                          attachment={a}
+                          isUser={m.from === "user"}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <p
+                  className={`mt-1 text-xs text-gray-400 ${
+                    m.from === "user" ? "text-right" : "text-left"
+                  }`}
+                >
+                  {m.from === "user" ? visitor.name || "You" : "BdSoft"} •{" "}
+                  {fmtTime(m.timestamp)}
+                </p>
+              </div>
+            ))}
+
+            {sending && (
+              <div className="text-xs text-gray-400 italic">Sending...</div>
+            )}
+            {error && (
+              <div className="rounded-md bg-red-50 border border-red-200 p-2 text-xs text-red-700">
+                ⚠️ {error}
+              </div>
+            )}
+          </div>
+
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="shrink-0 border-t bg-white p-3 space-y-2 text-left"
+          >
+            <div className="rounded-2xl border border-gray-200 p-3 space-y-2">
+              <input
+                type="text"
+                value={visitor.name}
+                onChange={(e) =>
+                  setVisitor((v) => ({ ...v, name: e.target.value }))
+                }
+                placeholder="আপনার নাম *"
+                required
+                className="w-full border-b border-gray-100 pb-2 text-sm outline-none focus:border-blue-400"
+              />
+              <input
+                type="email"
+                value={visitor.email}
+                onChange={(e) =>
+                  setVisitor((v) => ({ ...v, email: e.target.value }))
+                }
+                placeholder="email@example.com *"
+                required
+                className="w-full border-b border-gray-100 pb-2 text-sm outline-none focus:border-blue-400"
+              />
+              <input
+                type="tel"
+                value={visitor.phone}
+                onChange={(e) =>
+                  setVisitor((v) => ({ ...v, phone: e.target.value }))
+                }
+                placeholder="01XXXXXXXXX *"
+                required
+                className="w-full border-b border-gray-100 pb-2 text-sm outline-none focus:border-blue-400"
+              />
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Message..."
+                  className="min-w-0 flex-1 text-sm outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={sending}
+                  aria-label="Send"
+                  className="rounded-full bg-gray-200 p-2.5 text-gray-700 transition-all hover:bg-blue-600 hover:text-white disabled:opacity-50"
+                >
+                  <Send size={18} />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowAttachments((p) => !p)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border text-xs transition ${
+                  showAttachments || hasAttachments
+                    ? "bg-blue-50 border-blue-200 text-blue-700"
+                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <Paperclip size={14} />
+                Attachment
+                {hasAttachments && (
+                  <span className="ml-1 bg-blue-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
+                    {images.length + files.length + (voice ? 1 : 0)}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={recording ? stopRecording : startRecording}
+                className={`p-2 rounded-lg border transition ${
+                  recording
+                    ? "bg-red-500 text-white border-red-500 animate-pulse"
+                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                }`}
+                title={recording ? "Stop recording" : "Record voice"}
+              >
+                {recording ? <Square size={14} /> : <Mic size={14} />}
+              </button>
+              {recording && (
+                <span className="text-xs text-red-600 font-mono">
+                  {fmtTimeShort(recordingSeconds)}
                 </span>
               )}
             </div>
-          </div>
 
-          {/* Hover Indicator */}
-          <div className="relative z-10 flex justify-end">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <ArrowRight className="w-5 h-5 text-white" />
+            {showAttachments && (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 space-y-2 max-h-48 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    className="flex items-center justify-center gap-1.5 py-2 rounded-md bg-white border border-gray-200 text-xs text-gray-700 hover:bg-blue-50 hover:border-blue-300"
+                  >
+                    <ImageIcon size={14} /> Image
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center justify-center gap-1.5 py-2 rounded-md bg-white border border-gray-200 text-xs text-gray-700 hover:bg-blue-50 hover:border-blue-300"
+                  >
+                    <Paperclip size={14} /> File
+                  </button>
+                </div>
+
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+
+                {(images.length > 0 || files.length > 0 || voice) && (
+                  <ul className="space-y-1">
+                    {images.map((f, i) => (
+                      <li
+                        key={`img-${i}`}
+                        className="flex items-center gap-2 text-xs bg-white rounded-md px-2 py-1.5"
+                      >
+                        <ImageIcon size={12} className="text-blue-500" />
+                        <span className="truncate flex-1">{f.name}</span>
+                        <span className="text-gray-400">
+                          {formatFileSize(f.size)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setImages((prev) =>
+                              prev.filter((_, idx) => idx !== i)
+                            )
+                          }
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </li>
+                    ))}
+                    {files.map((f, i) => (
+                      <li
+                        key={`file-${i}`}
+                        className="flex items-center gap-2 text-xs bg-white rounded-md px-2 py-1.5"
+                      >
+                        <Paperclip size={12} className="text-gray-500" />
+                        <span className="truncate flex-1">{f.name}</span>
+                        <span className="text-gray-400">
+                          {formatFileSize(f.size)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setFiles((prev) =>
+                              prev.filter((_, idx) => idx !== i)
+                            )
+                          }
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </li>
+                    ))}
+                    {voice && (
+                      <li className="flex items-center gap-2 text-xs bg-white rounded-md px-2 py-1.5">
+                        <Mic size={12} className="text-red-500" />
+                        <span className="flex-1">Voice recording</span>
+                        <span className="text-gray-400">
+                          {formatFileSize(voice.size)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setVoice(null)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                )}
+
+                {hasAttachments && (
+                  <button
+                    type="button"
+                    onClick={clearAttachments}
+                    className="w-full text-[11px] text-red-600 hover:underline"
+                  >
+                    সব মুছুন
+                  </button>
+                )}
+
+                <p className="text-[10px] text-gray-400 text-center">
+                  Max 10MB per file • মোট max 30MB
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-1 text-center text-[11px] text-gray-400">
+              <Check size={10} /> Powered by BdSoft
             </div>
-          </div>
+          </form>
         </div>
-      </motion.div>
-    </motion.div>
+      )}
+    </div>
   );
-};
-
-// --- Fullscreen Modal Component ---
-interface FullscreenModalProps {
-  project: Project;
-  onClose: () => void;
 }
 
-const FullscreenModal = ({ project, onClose }: FullscreenModalProps) => {
-  const [showFileViewer, setShowFileViewer] = useState(false);
+function AttachmentBubble({
+  attachment,
+  isUser,
+}: {
+  attachment: ChatAttachment;
+  isUser: boolean;
+}) {
+  const { type, name, size, url } = attachment;
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 50 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 50 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-5xl h-[85vh] bg-gray-900 rounded-3xl overflow-hidden shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors text-white backdrop-blur-sm"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        {/* Content */}
-        <div className="h-full overflow-y-auto">
-          {/* Hero Section */}
-          <div className={`relative h-64 bg-linear-to-r ${project.bgGradient}`}>
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-30"
-              style={{ backgroundImage: `url(${project.image})` }}
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-gray-900 to-transparent" />
-            <div className="relative z-10 h-full flex items-end p-8">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  {project.featured && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white bg-linear-to-r from-yellow-400 to-pink-500">
-                      <Sparkles size={12} />
-                      FEATURED
-                    </span>
-                  )}
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white ${
-                    project.category === 'app'
-                      ? 'bg-linear-to-r from-purple-500 to-pink-500'
-                      : 'bg-linear-to-r from-emerald-500 to-teal-500'
-                  }`}>
-                    {project.category === 'app' ? <Smartphone size={12} /> : <Globe size={12} />}
-                    {project.category === 'app' ? 'APP PROTOTYPE' : 'WEB PROTOTYPE'}
-                  </span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">{project.title}</h2>
-                <p className="text-gray-300 text-lg">{project.shortDesc}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Details Section */}
-          <div className="p-8">
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Left Column */}
-              <div className="md:col-span-2 space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">About Project</h3>
-                  <p className="text-gray-400 leading-relaxed">{project.fullDesc}</p>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Key Features</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {project.features.map((feature: string, idx: number) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="flex items-center gap-2 text-gray-400"
-                      >
-                        <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Technologies</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.map((tech: string, idx: number) => (
-                      <span key={idx} className="px-3 py-1 rounded-full bg-gray-800 text-gray-300 text-sm">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Live Demos */}
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Live Prototypes</h3>
-                  <div className="space-y-3">
-                    {project.demoLinks.map((demo, idx) => (
-                      <motion.a
-                        key={idx}
-                        href={demo.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className={`flex items-center justify-between gap-2 w-full px-4 py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg ${
-                          demo.type === 'app'
-                            ? 'bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                            : 'bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          {demo.type === 'app' ? <Smartphone size={18} /> : <Globe size={18} />}
-                          <span>{demo.label}</span>
-                        </div>
-                        <ExternalLink size={16} />
-                      </motion.a>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Project Files */}
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-3">Project Files</h3>
-                  {project.projectFile && (
-                    <div className="space-y-3">
-                      <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
-                        <div className="flex items-center gap-3 mb-3">
-                          <FileText className="w-8 h-8 text-blue-400" />
-                          <div className="flex-1">
-                            <p className="text-white font-medium">{project.projectFile.name}</p>
-                            <p className="text-gray-400 text-sm">{project.projectFile.size}</p>
-                          </div>
-                        </div>
-                        <div className="flex gap-3">
-                          <motion.a
-                            href={project.projectFile.url}
-                            download
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-blue-600 rounded-lg text-white text-sm font-semibold hover:bg-blue-700 transition-all"
-                          >
-                            <Download className="w-4 h-4" />
-                            Download
-                          </motion.a>
-                          <motion.button
-                            onClick={() => setShowFileViewer(true)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center justify-center gap-2 flex-1 px-4 py-2 bg-gray-700 rounded-lg text-white text-sm font-semibold hover:bg-gray-600 transition-all"
-                          >
-                            <Eye className="w-4 h-4" />
-                            Preview
-                          </motion.button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Quick Stats */}
-                <div className="pt-4 border-t border-gray-800">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white">{project.features.length}</div>
-                      <div className="text-xs text-gray-500">Features</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-white">{project.techStack.length}</div>
-                      <div className="text-xs text-gray-500">Technologies</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* File Viewer Modal */}
-      <AnimatePresence>
-        {showFileViewer && project.projectFile && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
-            onClick={() => setShowFileViewer(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-4xl h-[80vh] bg-gray-900 rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setShowFileViewer(false)}
-                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors text-white backdrop-blur-sm"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <iframe
-                src={project.projectFile.url}
-                className="w-full h-full"
-                title={project.projectFile.name}
-              />
-            </motion.div>
-          </motion.div>
+  if (!url) {
+    return (
+      <div className="flex items-center gap-1 text-[11px] opacity-90 py-1">
+        {type === "image" && <ImageIcon size={11} />}
+        {type === "file" && <Paperclip size={11} />}
+        {type === "voice" && <Mic size={11} />}
+        <span className="truncate max-w-45">{name}</span>
+        {size > 0 && (
+          <span className="opacity-70">({formatFileSize(size)})</span>
         )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
+      </div>
+    );
+  }
 
-// --- Main Section Component ---
-interface ProjectsSectionProps {
-  showHeader?: boolean;
-  maxHeight?: string;
-  isEmbedded?: boolean;
-}
+  if (type === "image") {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block group"
+      >
+        <div className="rounded-lg overflow-hidden border border-white/30 bg-black/10">
+          <img
+            src={url}
+            alt={name}
+            className="max-h-40 w-auto object-cover group-hover:opacity-90 transition"
+          />
+        </div>
+        <p className="mt-1 text-[10px] opacity-80 truncate flex items-center gap-1">
+          <ExternalLink size={10} /> {name}
+          {size > 0 && <span>({formatFileSize(size)})</span>}
+        </p>
+      </a>
+    );
+  }
 
-export default function ProjectsSection({
-  showHeader = true,
-  maxHeight = "none",
-  isEmbedded = false
-}: ProjectsSectionProps) {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [activeCategory, setActiveCategory] = useState<'all' | 'app' | 'web'>('all');
-
-  // Filter by category
-  const filteredProjects = projects.filter(project =>
-    activeCategory === 'all' ? true : project.category === activeCategory
-  );
-
-  // ✅ Featured (AI) সবার আগে
-  const featuredProjects = filteredProjects.filter(p => p.featured);
-
-  // ✅ WEB আগে (featured বাদে)
-  const webProjects = filteredProjects.filter(
-    p => p.category === 'web' && !p.featured
-  );
-
-  // ✅ APP পরে (featured বাদে)
-  const appProjects = filteredProjects.filter(
-    p => p.category === 'app' && !p.featured
-  );
-
-  const containerStyle: CSSProperties = {};
-  if (maxHeight !== "none") {
-    containerStyle.maxHeight = maxHeight;
-    containerStyle.overflowY = "auto";
+  if (type === "voice") {
+    return (
+      <div className="rounded-lg bg-black/10 p-2">
+        <audio
+          src={url}
+          controls
+          className="h-7 w-full min-w-37.5"
+          style={{ maxWidth: "180px" }}
+        />
+        <p className="mt-1 text-[10px] opacity-80 truncate flex items-center gap-1">
+          🎤 {name}
+          {size > 0 && <span>({formatFileSize(size)})</span>}
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="relative">
-      {/* Header */}
-      {showHeader && (
-        <div className="text-center mb-10">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-linear-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Our Projects
-            </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-              Explore our innovative solutions across web and mobile platforms
-            </p>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Category Tabs — Web first, then App */}
-      <div className="flex flex-wrap justify-center gap-4 mb-10">
-        <button
-          onClick={() => setActiveCategory('all')}
-          className={`px-6 py-2 rounded-full font-semibold transition-all ${
-            activeCategory === 'all'
-              ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-              : isEmbedded
-                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-          }`}
-        >
-          All Projects
-        </button>
-
-        {/* ✅ Web Tab আগে */}
-        <button
-          onClick={() => setActiveCategory('web')}
-          className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${
-            activeCategory === 'web'
-              ? 'bg-linear-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
-              : isEmbedded
-                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-          }`}
-        >
-          <Globe size={18} />
-          Web Prototypes
-        </button>
-
-        {/* ✅ App Tab পরে */}
-        <button
-          onClick={() => setActiveCategory('app')}
-          className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${
-            activeCategory === 'app'
-              ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-              : isEmbedded
-                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-          }`}
-        >
-          <Smartphone size={18} />
-          App Prototypes
-        </button>
-      </div>
-
-      {/* Projects Grid */}
-      <div style={containerStyle} className="pr-2 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
-        {/* ⭐ Featured Project (AI) — সবার আগে */}
-        {featuredProjects.length > 0 && activeCategory === 'all' && (
-          <div className="mb-12">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-8 w-1 bg-linear-to-b from-yellow-400 to-pink-500 rounded-full" />
-              <h2 className={`text-2xl font-bold flex items-center gap-2 ${isEmbedded ? 'text-slate-800' : 'text-white'}`}>
-                <Sparkles className={isEmbedded ? 'text-yellow-500' : 'text-yellow-400'} />
-                Featured Project
-              </h2>
-              <p className={isEmbedded ? 'text-slate-500 hidden md:inline' : 'text-gray-400 hidden md:inline'}>
-                AI-Powered Innovation
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  index={index}
-                  onHover={setSelectedProject}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ✅ WEB Projects আগে */}
-        {webProjects.length > 0 && (activeCategory === 'all' || activeCategory === 'web') && (
-          <div className="mb-12">
-            {activeCategory === 'all' && (
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-8 w-1 bg-linear-to-b from-emerald-500 to-teal-500 rounded-full" />
-                <h2 className={`text-2xl font-bold flex items-center gap-2 ${isEmbedded ? 'text-slate-800' : 'text-white'}`}>
-                  <Globe className={isEmbedded ? 'text-emerald-600' : 'text-emerald-400'} />
-                  Web Prototypes
-                </h2>
-                <p className={isEmbedded ? 'text-slate-500 hidden md:inline' : 'text-gray-400 hidden md:inline'}>
-                  Built with React, Next.js, Node.js & Modern Stack
-                </p>
-              </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {webProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  index={index}
-                  onHover={setSelectedProject}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ✅ APP Projects পরে */}
-        {appProjects.length > 0 && (activeCategory === 'all' || activeCategory === 'app') && (
-          <div>
-            {activeCategory === 'all' && (
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-8 w-1 bg-linear-to-b from-purple-500 to-pink-500 rounded-full" />
-                <h2 className={`text-2xl font-bold flex items-center gap-2 ${isEmbedded ? 'text-slate-800' : 'text-white'}`}>
-                  <Smartphone className={isEmbedded ? 'text-purple-600' : 'text-purple-400'} />
-                  App Prototypes
-                </h2>
-                <p className={isEmbedded ? 'text-slate-500 hidden md:inline' : 'text-gray-400 hidden md:inline'}>
-                  Built with Kotlin, Jetpack Compose & KMP
-                </p>
-              </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {appProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  index={index}
-                  onHover={setSelectedProject}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Fullscreen Modal */}
-      <AnimatePresence>
-        {selectedProject && (
-          <FullscreenModal
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-          />
-        )}
-      </AnimatePresence>
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            .line-clamp-2 {
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-            }
-            .scrollbar-thin::-webkit-scrollbar { width: 6px; }
-            .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
-            .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-            .scrollbar-thin::-scrollbar-thumb:hover { background: #94a3b8; }
-          `,
-        }}
-      />
-    </div>
+    <a
+      href={url}
+      download={name}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`flex items-center gap-1.5 text-[11px] py-1.5 px-2 rounded-md transition ${
+        isUser
+          ? "bg-white/15 hover:bg-white/25"
+          : "bg-slate-100 hover:bg-slate-200"
+      }`}
+    >
+      <Paperclip size={11} />
+      <span className="truncate max-w-37.5">{name}</span>
+      {size > 0 && <span className="opacity-70">({formatFileSize(size)})</span>}
+      <Download size={11} className="ml-auto opacity-70" />
+    </a>
   );
 }

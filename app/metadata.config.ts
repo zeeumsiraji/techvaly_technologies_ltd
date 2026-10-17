@@ -3,13 +3,13 @@
 import type { Metadata, Viewport } from 'next'
 
 const SITE_URL = 'https://bdsoft.org'
-const SITE_NAME = 'BdSoft.org'
+const SITE_NAME = 'BdSoft'
 
 const SITE_TITLE =
-  'BdSoft.org — Software Company & Developer Growth Platform'
+  'BdSoft — Software Company & Developer Growth Platform'
 
 const SITE_DESCRIPTION =
-  'BdSoft.org is a modern software company focused on web applications, mobile apps, SaaS platforms, automation systems, and custom software solutions while helping freshers become skilled senior developers through real-world experience and teamwork.'
+  'BdSoft is a modern software company focused on web applications, mobile apps, SaaS platforms, automation systems, and custom software solutions while helping freshers become skilled senior developers through real-world experience and teamwork.'
 
 export const siteConfig = {
   name: SITE_NAME,
@@ -52,7 +52,7 @@ export const siteConfig = {
   ],
 
   social: {
-    facebook: 'https://facebook.com/bdsoft',
+    facebook: 'https://facebook.com/bdsoft.org',
     twitter: 'https://twitter.com/bdsoft',
     linkedin: 'https://linkedin.com/company/bdsoft',
     github: 'https://github.com/bdsoft',

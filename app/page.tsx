@@ -30,7 +30,7 @@ export default function Home() {
       />
 
       <Hero/>
-      <About />
+      
       
       {/* Additional stats section */}
       <section className="py-20 bg-slate-50">
@@ -50,8 +50,13 @@ export default function Home() {
             ))}
           </div>
         </div>
+       
+
+         
+         <About />
 
          <Integrations />
+         
       </section>
     </>
   )

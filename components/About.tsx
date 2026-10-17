@@ -2,7 +2,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import ProjectsSection from '@/components/ProjectsSection';
+import ProjectsSection from './project/ProjectsSection';
 
 export default function Hero() {
   return (
@@ -94,13 +94,11 @@ export default function Hero() {
             </p>
           </motion.div>
 
-          <div className="bg-slate-50/80 backdrop-blur-sm rounded-3xl p-4 md:p-6 border border-slate-200">
-            <ProjectsSection 
-              showHeader={false} 
-              maxHeight="800px"
-              isEmbedded={true}
-            />
-          </div>
+          <div className="max-w-7xl mx-auto">
+            <ProjectsSection />
+            </div>
+
+         
         </div>
 
         {/* ===== Building Software & Future Developers ===== */}

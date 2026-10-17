@@ -7,7 +7,6 @@ import Navbar from '@/components/Navigation/Topbar'
 import Footer from '@/components/Navigation/Footer'
 import FloatingChat from '@/components/Navigation/FloatingChat'
 
-
 import { metadata, viewport, siteConfig } from './metadata.config'
 
 // Initialize Inter font
@@ -106,12 +105,13 @@ export default function RootLayout({
         </a>
 
         <div className="relative flex min-h-screen flex-col">
-          {/* Navigation Bar - Fixed */}
+          
+          {/* Navigation Bar */}
           <nav>
             <Navbar />
           </nav>
 
-          {/* Main Content Area */}
+        
           <main 
             id="main-content" 
             className="relative z-10 grow pt-16"
@@ -119,7 +119,6 @@ export default function RootLayout({
           >
             {children}
           </main>
-
 
           {/* Floating Chat Widget */}
           <FloatingChat />

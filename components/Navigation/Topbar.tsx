@@ -19,7 +19,7 @@ import { SiAndroid, SiApple, SiLinux } from 'react-icons/si';
 import type { IconType } from 'react-icons';
 
 import SolutionsDropdown from './SolutionsDropdown';
-import ProductDropdown from './ProductDropdown';
+import ProductDropdown from '../project/ProductDropdown';
 
 type NavLink = {
   name: string;
@@ -86,6 +86,7 @@ export default function Navbar() {
     setOpenMobileDropdown(openMobileDropdown === name ? null : name);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderMobileDropdownItems = (links: any[], isSolution: boolean = false) => {
     return (
       <div className={`grid gap-2 px-3 pb-3 ${isSolution ? 'sm:grid-cols-2' : ''}`}>
@@ -164,7 +165,7 @@ export default function Navbar() {
           {/* Contact Us Gradient Button */}
           <Link
             href="/contact"
-            className="rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-md hover:opacity-95 transition-opacity"
+            className="rounded-full bg-linear-to-r from-sky-500 via-blue-500 to-indigo-600 px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-md hover:opacity-95 transition-opacity"
           >
             CONTACT US
           </Link>
@@ -230,7 +231,7 @@ export default function Navbar() {
             {/* Mobile Contact Us Gradient Button */}
             <Link
               href="/contact"
-              className="mt-2 block text-center rounded-xl bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md"
+              className="mt-2 block text-center rounded-xl bg-linear-to-r from-sky-500 via-blue-500 to-indigo-600 px-4 py-3 text-base font-semibold text-white shadow-md"
               onClick={closeMobileMenu}
             >
               CONTACT US
