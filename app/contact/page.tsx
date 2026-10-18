@@ -20,13 +20,14 @@ interface ContactInfo {
 
 type SubmitStatus = 'success' | 'error' | null
 
-// IMPORTANT: Replace this with your actual Google Apps Script URL
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4ZfiLt1h2MsEjVazm6pUNnOzeSqJ8cDB_Xk0RZRMwWN9wxO8jYJoPuWZyZIE8q90XuA/exec"
-
 // Maximum file size: 5MB
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 // Allowed file types
-const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+const ALLOWED_FILE_TYPES = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+]
 
 export default function ContactPage() {
   const [formData, setFormData] = useState<FormData>({
@@ -48,23 +49,23 @@ export default function ContactPage() {
 
     if (type === 'file') {
       const file = files?.[0] || null
-      
+
       setFileError('')
-      
+
       if (file) {
         if (file.size > MAX_FILE_SIZE) {
           setFileError(`File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`)
           if (fileInputRef.current) fileInputRef.current.value = ''
           return
         }
-        
+
         if (!ALLOWED_FILE_TYPES.includes(file.type)) {
           setFileError('Only PDF, DOC, or DOCX files are allowed')
           if (fileInputRef.current) fileInputRef.current.value = ''
           return
         }
       }
-      
+
       setFormData((prev) => ({
         ...prev,
         file: file
@@ -80,40 +81,42 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
+
     if (formData.file && formData.file.size > MAX_FILE_SIZE) {
       setFileError(`File size must be less than ${MAX_FILE_SIZE / (1024 * 1024)}MB`)
       return
     }
-    
+
     setIsSubmitting(true)
     setSubmitStatus(null)
     setErrorMessage('')
     setFileError('')
 
     try {
-      const postData = {
-        name: formData.name,
-        number: formData.number,
-        email: formData.email,
-        address: formData.address,
-        fileName: formData.file?.name || '',
-        fileSize: formData.file ? `${(formData.file.size / 1024).toFixed(2)} KB` : '',
-        fileType: formData.file?.type || '',
-        timestamp: new Date().toISOString()
+      const fd = new FormData();
+      fd.append("name", formData.name);
+      fd.append("number", formData.number);
+      fd.append("email", formData.email);
+      fd.append("address", formData.address);
+      
+      if (formData.file) {
+        fd.append("file", formData.file);
       }
 
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData)
-      })
+      // ✅ Calling our own Next.js API instead of Google Apps Script
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        body: fd,
+      });
+
+      const json = await res.json();
+      
+      if (!json.ok) {
+        throw new Error(json.error || "Failed to submit");
+      }
 
       setSubmitStatus('success')
-      
+
       setFormData({
         name: '',
         number: '',
@@ -121,16 +124,18 @@ export default function ContactPage() {
         address: '',
         file: null
       })
-      
+
       if (fileInputRef.current) fileInputRef.current.value = ''
-      
+
       setTimeout(() => setSubmitStatus(null), 5000)
-      
+
     } catch (error) {
       console.error('Submission error:', error)
       setSubmitStatus('error')
-      setErrorMessage('Something went wrong. Please try again.')
-      
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Something went wrong. Please try again.'
+      )
+
       setTimeout(() => {
         setSubmitStatus(null)
         setErrorMessage('')
@@ -180,7 +185,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen pt-32 pb-20 px-6 relative">
       {/* Background image */}
-      <div 
+      <div
         className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/contactbg.jpg')" }}
       />
@@ -201,7 +206,8 @@ export default function ContactPage() {
             Contact <span className="text-tiger-orange">Us</span>
           </h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Have a project in mind? We&apos;d love to hear from you. Submit your information and we&apos;ll get back to you within 24 hours.
+            Have a project in mind? We&apos;d love to hear from you. Submit your
+            information and we&apos;ll get back to you within 24 hours.
           </p>
         </motion.div>
 
@@ -250,7 +256,8 @@ export default function ContactPage() {
                 Submit Your Information
               </h2>
               <p className="text-white/60 mb-6">
-                Fill out the form below and we&apos;ll get back to you as soon as possible.
+                Fill out the form below and we&apos;ll get back to you as soon as
+                possible.
               </p>
 
               {submitStatus === 'success' && (
