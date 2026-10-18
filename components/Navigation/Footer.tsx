@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import LoginDropdown from '@/components/auth/LoginDropdown' // ⭐ LoginDropdown ইমপোর্ট
 
 export default function Footer() {
   const navLinks = [
@@ -15,7 +16,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col gap-8">
         
         {/* Top Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
           
           {/* Logo */}
           <div className="text-2xl font-bold tracking-tighter">
@@ -24,7 +25,7 @@ export default function Footer() {
           </div>
 
           {/* Navigation Links */}
-          <div className="flex flex-wrap justify-center gap-6 order-3 md:order-2">
+          <div className="flex flex-wrap justify-center gap-6 order-3 lg:order-2">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -36,9 +37,16 @@ export default function Footer() {
             ))}
           </div>
 
-          {/* Copyright */}
-          <div className="flex flex-col text-sm text-white/50 text-center order-2 md:order-3">
-            © {new Date().getFullYear()} BdSoft.org — All rights reserved.
+          {/* ⭐ Admin Login & Copyright Section */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 order-2 lg:order-3">
+            <div className="flex flex-col text-sm text-white/50 text-center sm:text-right">
+              © {new Date().getFullYear()} BdSoft.org — All rights reserved.
+            </div>
+            
+            {/* Login Dropdown */}
+            <div className="relative">
+              <LoginDropdown />
+            </div>
           </div>
           
         </div>

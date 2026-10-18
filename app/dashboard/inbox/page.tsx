@@ -43,7 +43,8 @@ export default function InboxPage() {
   const { data, loading, error } = useSheet<RawRow>("Inbox");
   const [replyTo, setReplyTo] = useState<InboxItem | null>(null);
 
-  const items = data.map(normalize);
+  // ✅ এখানে ডেটাগুলো Reverse করা হয়েছে যাতে নতুন মেসেজ আগে আসে
+  const items = [...data].map(normalize).reverse();
 
   return (
     <div className="space-y-4">

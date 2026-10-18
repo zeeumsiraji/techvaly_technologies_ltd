@@ -6,6 +6,7 @@ import './globals.css'
 import Navbar from '@/components/Navigation/Topbar'
 import Footer from '@/components/Navigation/Footer'
 import FloatingChat from '@/components/Navigation/FloatingChat'
+import { Providers } from './providers' // ⭐ নতুন যোগ করা হলো
 
 import { metadata, viewport, siteConfig } from './metadata.config'
 
@@ -104,28 +105,29 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        <div className="relative flex min-h-screen flex-col">
-          
-          {/* Navigation Bar */}
-          <nav>
-            <Navbar />
-          </nav>
+        <Providers> {/* ⭐ Providers দিয়ে র‍্যাপ করা হলো */}
+          <div className="relative flex min-h-screen flex-col">
+            
+            {/* Navigation Bar */}
+            <nav>
+              <Navbar />
+            </nav>
 
-        
-          <main 
-            id="main-content" 
-            className="relative z-10 grow pt-16"
-            tabIndex={-1}
-          >
-            {children}
-          </main>
+            <main 
+              id="main-content" 
+              className="relative z-10 grow pt-16"
+              tabIndex={-1}
+            >
+              {children}
+            </main>
 
-          {/* Floating Chat Widget */}
-          <FloatingChat />
+            {/* Floating Chat Widget */}
+            <FloatingChat />
 
-          {/* Footer */}
-          <Footer />
-        </div>
+            {/* Footer */}
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   )
