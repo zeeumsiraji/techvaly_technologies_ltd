@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { google } from "googleapis";
 
-// ✅ Custom Types for Extended User/Session
+// ✅ Custom Types for Extended User
 interface ExtendedUser {
   id?: string;
   name?: string | null;
@@ -12,11 +12,25 @@ interface ExtendedUser {
   dbName?: string;
 }
 
+// ✅ Custom Type for Extended Session (নতুন যোগ করা হলো)
+interface ExtendedSession {
+  user?: ExtendedUser;
+  accessToken?: string;
+  expires: string;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: "openid email profile https://www.googleapis.com/auth/gmail.readonly",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
     }),
   ],
 
@@ -75,22 +89,32 @@ export const authOptions: NextAuthOptions = {
       }
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         const extUser = user as ExtendedUser;
         token.role = extUser.role;
         token.dbName = extUser.dbName;
       }
+      
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user) {
-        const extSession = session.user as ExtendedUser;
-        extSession.role = token.role as string;
-        extSession.dbName = token.dbName as string;
+      // ✅ এখানে any এর বদলে ExtendedSession ব্যবহার করা হলো
+      const extSession = session as ExtendedSession;
+      
+      if (extSession.user) {
+        extSession.user.role = token.role as string;
+        extSession.user.dbName = token.dbName as string;
       }
-      return session;
+      
+      extSession.accessToken = token.accessToken as string;
+      
+      return extSession;
     },
   },
 

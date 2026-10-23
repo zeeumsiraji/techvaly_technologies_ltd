@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 import { saveToServer } from "@/lib/upload-server";
+import { sendMail } from "@/lib/mailer"; // ⭐ নতুন ইমপোর্ট
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -51,7 +52,6 @@ export async function POST(req: Request) {
     if (file && file.size > 0) {
       try {
         const uploaded = await saveToServer(file, file.name, file.type);
-        // ✅ এখানে uploaded.url ব্যবহার করুন (যেমন: /uploads/1729-abc.pdf)
         fileUrl = uploaded.url; 
       } catch (err) {
         console.error("File upload failed:", err);
@@ -66,7 +66,6 @@ export async function POST(req: Request) {
     const sheets = google.sheets({ version: "v4", auth });
     const nextId = await getNextId(sheets, sheetId);
 
-    // Contacts ট্যাবের হেডার: id, name, phone, email, type, lastTalk, address, file
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
       range: "Contacts!A:H",
@@ -81,11 +80,56 @@ export async function POST(req: Request) {
             "Contact Form",
             new Date().toISOString(),
             address,
-            fileUrl, // ✅ এখানে /uploads/... লিংকটি সেভ হবে
+            fileUrl, 
           ],
         ],
       },
     });
+
+    // ৩. ⭐ এডমিনকে নোটিফিকেশন মেইল পাঠানো
+    // (নোট: এখানে ট্রাই-ক্যাচ দেওয়া হয়েছে যাতে মেইল ফেইল করলেও ফর্ম সাবমিট ফেইল না করে)
+    try {
+      await sendMail({
+        to: process.env.GMAIL_USER as string, // আপনার জিমেইলে যাবে
+        subject: `New Contact Message from ${name}`,
+        html: `
+          <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; max-width: 600px;">
+            <h2 style="color: #2563eb; margin-bottom: 20px;">New Contact Submission</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Name:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Email:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${email}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Phone:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${number}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><strong>Address:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9;">${address}</td>
+              </tr>
+              ${
+                fileUrl
+                  ? `
+              <tr>
+                <td style="padding: 8px 0;"><strong>Attachment:</strong></td>
+                <td style="padding: 8px 0;"><a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}${fileUrl}" style="color: #2563eb;">Click to view file</a></td>
+              </tr>`
+                  : ""
+              }
+            </table>
+          </div>
+        `,
+        replyTo: email, // ✅ আপনি যেন সরাসরি কাস্টমারকে রিপ্লাই দিতে পারেন
+      });
+    } catch (mailError) {
+      console.error("Notification email failed:", mailError);
+      // ইমেইল ফেইল করলেও ফর্ম সাবমিট সফল হবে
+    }
 
     return NextResponse.json({ ok: true, message: "Contact saved" });
   } catch (err) {
