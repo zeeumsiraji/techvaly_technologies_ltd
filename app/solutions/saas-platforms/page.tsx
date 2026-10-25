@@ -11,25 +11,15 @@ import {
   Zap,
   Database,
   Rocket,
-  Settings,
   Bell,
   Mail,
-  FileText,
   Shield,
   ArrowRight,
   Star,
   Award,
   CheckCircle,
-  TrendingUp,
   Activity,
-  Gauge,
-  Server,
-  Layers,
-  ShoppingCart,
-  MessageCircle,
-  Calendar,
-  Download
-} from 'lucide-react'
+  Layers} from 'lucide-react'
 
 export default function SaaSPage() {
   const features = [
@@ -143,7 +133,7 @@ export default function SaaSPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black">
+    <main className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-black">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 px-6">
         {/* Animated Background */}
@@ -167,7 +157,7 @@ export default function SaaSPage() {
             </div>
 
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
                 SaaS Platforms
               </span>
             </h1>
@@ -187,7 +177,7 @@ export default function SaaSPage() {
             transition={{ delay: 0.2 }}
             className="flex flex-wrap justify-center gap-4 mb-20"
           >
-            <button className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <button className="group px-8 py-4 rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2">
               Launch Your SaaS
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -226,7 +216,7 @@ export default function SaaSPage() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+                <div className="text-4xl md:text-5xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
                   {stat.value}
                 </div>
                 <div className="text-white font-semibold mb-1">{stat.label}</div>
@@ -261,9 +251,9 @@ export default function SaaSPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5 }}
-                className="group p-6 rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
+                className="group p-6 rounded-2xl bg-linear-to-br from-gray-800/50 to-gray-900/50 border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   {feature.icon}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
@@ -275,7 +265,7 @@ export default function SaaSPage() {
       </section>
 
       {/* Pricing Models Section */}
-      <section className="px-6 py-24 bg-gradient-to-b from-purple-900/20 to-transparent">
+      <section className="px-6 py-24 bg-linear-to-b from-purple-900/20 to-transparent">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -299,7 +289,7 @@ export default function SaaSPage() {
                 transition={{ delay: index * 0.1 }}
                 className="flex items-center gap-4 p-4 rounded-xl bg-gray-800/30 border border-gray-700 group hover:border-purple-500/50 transition-all"
               >
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                   {model.icon}
                 </div>
                 <div>
@@ -326,7 +316,7 @@ export default function SaaSPage() {
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Multi-tenant{' '}
-                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                   Architecture
                 </span>
               </h2>
@@ -354,8 +344,8 @@ export default function SaaSPage() {
               whileInView={{ opacity: 1, x: 0 }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur-3xl opacity-20" />
-              <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border border-gray-700">
+              <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-cyan-500 rounded-3xl blur-3xl opacity-20" />
+              <div className="relative bg-linear-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border border-gray-700">
                 <div className="text-center mb-6">
                   <Layers className="w-16 h-16 text-blue-400 mx-auto mb-4" />
                   <h3 className="text-2xl font-bold text-white mb-2">Tenant Isolation</h3>
@@ -408,7 +398,7 @@ export default function SaaSPage() {
                 <span className="text-white font-semibold group-hover:text-purple-400 transition-colors">
                   {tech.name}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${tech.color} text-white`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold bg-linear-to-r ${tech.color} text-white`}>
                   {tech.level}
                 </span>
               </motion.div>
@@ -441,10 +431,10 @@ export default function SaaSPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
+                className="p-6 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                     {integration.icon}
                   </div>
                   <h3 className="text-white font-bold">{integration.name}</h3>
@@ -467,8 +457,8 @@ export default function SaaSPage() {
               className="order-2 lg:order-1"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl blur-3xl opacity-20" />
-                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border border-gray-700">
+                <div className="absolute inset-0 bg-linear-to-r from-green-500 to-emerald-500 rounded-3xl blur-3xl opacity-20" />
+                <div className="relative bg-linear-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border border-gray-700">
                   <div className="text-center mb-6">
                     <CreditCard className="w-16 h-16 text-green-400 mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-white mb-2">Subscription Management</h3>
@@ -502,7 +492,7 @@ export default function SaaSPage() {
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Smart{' '}
-                <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                   Subscription Billing
                 </span>
               </h2>
@@ -540,7 +530,7 @@ export default function SaaSPage() {
               SaaS Success Stories
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Platforms we've built for successful SaaS companies
+              Platforms we&apos;ve built for successful SaaS companies
             </p>
           </motion.div>
 
@@ -552,7 +542,7 @@ export default function SaaSPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="group p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
+                className="group p-6 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1">
@@ -594,17 +584,17 @@ export default function SaaSPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 text-center">
+            <div className="p-6 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 text-center">
               <Rocket className="w-12 h-12 text-purple-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">Auto-scaling</h3>
               <p className="text-gray-400 text-sm">Dynamic resource allocation based on traffic patterns</p>
             </div>
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 text-center">
+            <div className="p-6 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 text-center">
               <Globe2 className="w-12 h-12 text-purple-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">Global CDN</h3>
               <p className="text-gray-400 text-sm">Multi-region deployment for low latency worldwide</p>
             </div>
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 text-center">
+            <div className="p-6 rounded-2xl bg-linear-to-br from-gray-800 to-gray-900 border border-gray-700 text-center">
               <Database className="w-12 h-12 text-purple-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-white mb-2">Database Sharding</h3>
               <p className="text-gray-400 text-sm">Horizontal partitioning for massive data volumes</p>
@@ -620,17 +610,17 @@ export default function SaaSPage() {
           whileInView={{ opacity: 1, scale: 1 }}
           className="max-w-4xl mx-auto text-center"
         >
-          <div className="relative rounded-3xl bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-indigo-600/20 p-12 border border-purple-500/30">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-10" />
+          <div className="relative rounded-3xl bg-linear-to-r from-purple-600/20 via-pink-600/20 to-indigo-600/20 p-12 border border-purple-500/30">
+            <div className="absolute inset-0 bg-linear-to-r from-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-10" />
             <Cloud className="w-16 h-16 text-purple-400 mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Ready to Launch Your SaaS Platform?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Let's build a scalable, secure, and profitable SaaS solution
+              Let&apos;s build a scalable, secure, and profitable SaaS solution
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
+              <button className="group px-8 py-4 rounded-2xl bg-linear-to-r from-purple-500 to-pink-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
                 Start Your SaaS Project
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>

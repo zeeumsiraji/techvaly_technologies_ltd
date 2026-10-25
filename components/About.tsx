@@ -86,12 +86,7 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="text-center mb-10"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
-              Our Projects
-            </h2>
-            <p className="mt-3 md:mt-4 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
-              Browse our full portfolio – click any card to explore details.
-            </p>
+            
           </motion.div>
 
           <div className="max-w-7xl mx-auto">

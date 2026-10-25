@@ -368,7 +368,7 @@ export default function AndroidPage() {
               Ready to Build Your Android App?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Let's discuss your project and turn your idea into a successful Android application
+              Let&apos;s discuss your project and turn your idea into a successful Android application
             </p>
             <button className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 inline-flex items-center gap-2">
               Schedule a Free Consultation

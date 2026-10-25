@@ -1,8 +1,12 @@
 'use client'
 
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import About from '@/components/About'
 import Hero from '@/components/Hero'
 import Integrations from '@/components/Integrations'
+import SolutionCard from '@/components/SolutionCard' // ✅ SolutionCard ইমপোর্ট
+import { solutionsData } from '@/lib/solutionsData' // ✅ ডেটা ইমপোর্ট
 
 export default function Home() {
   return (
@@ -29,8 +33,7 @@ export default function Home() {
         aria-hidden="true"
       />
 
-      <Hero/>
-      
+      <Hero />
       
       {/* Additional stats section */}
       <section className="py-20 bg-slate-50">
@@ -50,14 +53,45 @@ export default function Home() {
             ))}
           </div>
         </div>
-       
-
-         
-         <About />
-
-         <Integrations />
-         
       </section>
+
+      {/* About Section */}
+      <About />
+
+      {/* ✅ Solutions Section (About-এর ঠিক নিচে) */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
+              Solutions That Drive Results
+            </h2>
+            <p className="text-slate-600 text-lg">
+              We don&apos;t just write code; we solve business problems. Discover how our expertise can help you grow.
+            </p>
+          </div>
+
+          {/* Solutions Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {solutionsData.map((sol) => (
+              <SolutionCard key={sol.slug} solution={sol} variant="home" />
+            ))}
+          </div>
+
+          {/* View All Button */}
+          <div className="text-center mt-12">
+            <Link 
+              href="/solutions"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-colors shadow-lg hover:shadow-xl"
+            >
+              Explore All Solutions
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Integrations Section */}
+      <Integrations />
     </>
   )
 }
